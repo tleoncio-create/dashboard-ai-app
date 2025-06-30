@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>4 + 1 – Ferramenta de Análise</title>
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      --green: #28a745;
+      --green-dark: #1e7e34;
+      --gray-border: #ced4da;
+    }
+    body {
+      background: #f8f9fa;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    .dashboard {
+      width: 600px;
+      max-width: 100%;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    h1 {
+      margin: 0;
+      font-size: 72px;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 1.1;
+      text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    h2 {
+      margin: .5rem 0 2rem;
+      font-size: 1.3rem;
+      text-align: center;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+    .field-block {
+      margin-bottom: 1.8rem;
+      text-align: center;
+    }
+    label {
+      font-weight: 700;
+      display: block;
+      margin-bottom: .25rem;
+      text-align: left;
+      text-shadow: 0 2px 3px rgba(0,0,0,0.15);
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: .75rem;
+      border: 1px solid var(--gray-border);
+      border-radius: 20px;
+      resize: vertical;
+      box-sizing: border-box;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .save-btn {
+      margin-top: .6rem;
+      padding: .4rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      font-size: .9rem;
+      display: inline-block;
+    }
+    .save-btn:hover { background: #0069d9; }
+
+    .analyse-btn {
+      display: block;
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: #fff;
+      background: var(--green);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 1.2rem auto 1.5rem;
+      transition: background .2s;
+    }
+    .analyse-btn:hover { background: var(--green-dark); }
+
+    #analysis-box {
+      min-height: 120px;
+      border: 1px dashed var(--gray-border);
+      border-radius: 4px;
+      padding: 1rem;
+      white-space: pre-wrap;
+      background: #fcfcfc;
+    }
+    .hint {
+      font-size: .8rem;
+      color: #6c757d;
+      margin-top: .25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>4 + 1</h1>
+    <h2>Mapeie. Valide. Cresça. Repita.</h2>
+
+    <div class="field-block">
+      <label for="field1">Contexto Geral</label>
+      <textarea id="field1"></textarea>
+      <button class="save-btn" onclick="saveField('field1')">Salvar</button>
+      <div class="hint" id="hint-field1"></div>
+    </div>
+
+    <div class="field-block">
+      <label for="field2">Social Listening + ICP</label>
+      <textarea id="field2"></textarea>
+      <button class="save-btn" onclick="saveField('field2')">Salvar</button>
+      <div class="hint" id="hint-field2"></div>
+    </div>
+
+    <div class="field-block">
+      <label for="field3">Matriz de Produto</label>
+      <textarea id="field3"></textarea>
+      <button class="save-btn" onclick="saveField('field3')">Salvar</button>
+      <div class="hint" id="hint-field3"></div>
+    </div>
+
+    <div class="field-block">
+      <label for="field4">Pulse 4D</label>
+      <textarea id="field4"></textarea>
+      <button class="save-btn" onclick="saveField('field4')">Salvar</button>
+      <div class="hint" id="hint-field4"></div>
+    </div>
+
+    <button class="analyse-btn" onclick="runAnalysis()">Gerar Análise</button>
+
+    <div id="analysis-box">O resultado da análise aparecerá aqui…</div>
+  </div>
+
+  <script>
+    function saveField(id) {
+      const value = document.getElementById(id).value.trim();
+      localStorage.setItem(id, value);
+      document.getElementById('hint-' + id).textContent = '✅ Salvo!';
+      setTimeout(() => {
+        document.getElementById('hint-' + id).textContent = '';
+      }, 2000);
+    }
+    function loadFields() {
+      ['field1','field2','field3','field4'].forEach(id => {
+        const saved = localStorage.getItem(id);
+        if (saved) document.getElementById(id).value = saved;
+      });
+    }
+    async function runAnalysis() {
+      const payload = {
+        contexto: document.getElementById('field1').value.trim(),
+        socialICP: document.getElementById('field2').value.trim(),
+        matrizProduto: document.getElementById('field3').value.trim(),
+        pulse4d: document.getElementById('field4').value.trim()
+      };
+      const box = document.getElementById('analysis-box');
+      box.textContent = '⏳ Analisando…';
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Erro na API');
+        const data = await res.json();
+        box.textContent = data.resultado || '⚠️ Resposta vazia';
+      } catch (err) {
+        console.error(err);
+        box.textContent = '❌ Falha ao gerar análise. Tente de novo.';
+      }
+    }
+    loadFields();
+  </script>
+</body>
+</html>
