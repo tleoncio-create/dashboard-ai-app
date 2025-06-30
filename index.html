@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <title>4 + 1 – Ferramenta de Análise</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     :root {
       font-family: system-ui, sans-serif;
@@ -27,18 +27,10 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,.08);
     }
-    <div style="text-align:right; margin-bottom:1rem">
-  <label for="langSelect"><strong>🌐 Idioma:</strong></label>
-  <select id="langSelect">
-    <option value="pt">Português</option>
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select>
-</div>
-    
+    /* Títulos */
     h1 {
       margin: 0;
-      font-size: 72px;
+      font-size: clamp(36px, 10vw, 72px);
       text-align: center;
       text-transform: uppercase;
       font-weight: 800;
@@ -52,10 +44,8 @@
       font-weight: 700;
       text-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
-    .field-block {
-      margin-bottom: 1.8rem;
-      text-align: center;
-    }
+    /* Campos */
+    .field-block { margin-bottom: 1.8rem; text-align: center; }
     label {
       font-weight: 700;
       display: block;
@@ -73,6 +63,7 @@
       box-sizing: border-box;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+    /* Botões */
     .save-btn {
       margin-top: .6rem;
       padding: .4rem 1.2rem;
@@ -82,10 +73,8 @@
       color: #fff;
       cursor: pointer;
       font-size: .9rem;
-      display: inline-block;
     }
-    .save-btn:hover { background: #0069d9; }
-
+    .save-btn:hover   { background: #0069d9; }
     .analyse-btn {
       display: block;
       padding: 10px 20px;
@@ -108,185 +97,153 @@
       white-space: pre-wrap;
       background: #fcfcfc;
     }
-    .hint {
-      font-size: .8rem;
-      color: #6c757d;
-      margin-top: .25rem;
-    }
-    h1 { font-size: clamp(36px, 10vw, 72px); }
+    .hint { font-size: .8rem; color: #6c757d; margin-top: .25rem; }
+
     @media (max-width: 480px) {
-  .dashboard { padding: 1.25rem; }
-  textarea   { min-height: 64px; }
-}
+      .dashboard { padding: 1.25rem; }
+      textarea   { min-height: 64px; }
+    }
   </style>
 </head>
+
 <body>
   <div class="dashboard">
+    <!-- Seletor de idioma -->
+    <div style="text-align:right; margin-bottom:1rem">
+      <label id="lbl-lang" for="langSelect"><strong>🌐 Idioma:</strong></label>
+      <select id="langSelect">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+
     <h1 id="title-h1">4 + 1</h1>
     <h2 id="title-h2">Mapeie. Valide. Cresça. Repita.</h2>
 
     <div class="field-block">
       <label id="lbl-contexto" for="field1">Contexto Geral</label>
       <textarea id="field1"></textarea>
-      <button id="btn-save-1"
-        class="save-btn"
-        onclick="saveField('field1')">Salvar</button>
+      <button id="btn-save-1" class="save-btn" onclick="saveField('field1')">Salvar</button>
       <div class="hint" id="hint-field1"></div>
     </div>
 
     <div class="field-block">
       <label id="lbl-social" for="field2">Social Listening + ICP</label>
       <textarea id="field2"></textarea>
-      <button id="btn-save-2"
-        class="save-btn"
-        onclick="saveField('field2')">Salvar</button>
+      <button id="btn-save-2" class="save-btn" onclick="saveField('field2')">Salvar</button>
       <div class="hint" id="hint-field2"></div>
     </div>
 
     <div class="field-block">
       <label id="lbl-matriz" for="field3">Matriz de Produto</label>
       <textarea id="field3"></textarea>
-      <button id="btn-save-3"
-        class="save-btn"
-        onclick="saveField('field3')">Salvar</button>
+      <button id="btn-save-3" class="save-btn" onclick="saveField('field3')">Salvar</button>
       <div class="hint" id="hint-field3"></div>
     </div>
 
     <div class="field-block">
       <label id="lbl-pulse" for="field4">Pulse 4D</label>
       <textarea id="field4"></textarea>
-      <button id="btn-save-4"
-        class="save-btn"
-        onclick="saveField('field4')">Salvar</button>
+      <button id="btn-save-4" class="save-btn" onclick="saveField('field4')">Salvar</button>
       <div class="hint" id="hint-field4"></div>
     </div>
 
-    <button id="btn-analyze"
-        class="analyse-btn"
-        onclick="runAnalysis()">Gerar Análise</button>
+    <button id="btn-analyze" class="analyse-btn" onclick="runAnalysis()">Gerar Análise</button>
 
     <div id="analysis-box">O resultado da análise aparecerá aqui…</div>
   </div>
 
   <script>
-// --- Dicionário de traduções -------------
-const i18n = {
-  pt: {
-    h1: "4 + 1",
-    h2: "Mapeie. Valide. Cresça. Repita.",
-    contexto: "Contexto Geral",
-    social:   "Social Listening + ICP",
-    matriz:   "Matriz de Produto",
-    pulse:    "Pulse 4D",
-    salvar:   "Salvar",
-    analisar: "Gerar Análise",
-    dialogo:  "O resultado da análise aparecerá aqui…",
-    idioma:   "Idioma:"
-  },
-  en: {
-    h1: "4 + 1",
-    h2: "Map. Validate. Grow. Repeat.",
-    contexto: "General Context",
-    social:   "Social Listening + ICP",
-    matriz:   "Product Matrix",
-    pulse:    "Pulse 4D",
-    salvar:   "Save",
-    analisar: "Generate Analysis",
-    dialogo:  "Analysis result will appear here…",
-    idioma:   "Language:"
-  },
-  es: {
-    h1: "4 + 1",
-    h2: "Mapea. Valida. Crece. Repite.",
-    contexto: "Contexto General",
-    social:   "Escucha Social + ICP",
-    matriz:   "Matriz de Producto",
-    pulse:    "Pulse 4D",
-    salvar:   "Guardar",
-    analisar: "Generar Análisis",
-    dialogo:  "El resultado del análisis aparecerá aquí…",
-    idioma:   "Idioma:"
-  }
-};
-function applyLang(lang) {
-  const t = i18n[lang] || i18n.pt;
+  /* ===== Dicionário de traduções ===== */
+  const i18n = {
+    pt: { h1: "4 + 1", h2: "Mapeie. Valide. Cresça. Repita.",
+          contexto:"Contexto Geral", social:"Social Listening + ICP",
+          matriz:"Matriz de Produto", pulse:"Pulse 4D",
+          salvar:"Salvar", analisar:"Gerar Análise",
+          dialogo:"O resultado da análise aparecerá aqui…", idioma:"Idioma:" },
+    en: { h1:"4 + 1", h2:"Map. Validate. Grow. Repeat.",
+          contexto:"General Context", social:"Social Listening + ICP",
+          matriz:"Product Matrix", pulse:"Pulse 4D",
+          salvar:"Save", analisar:"Generate Analysis",
+          dialogo:"Analysis result will appear here…", idioma:"Language:" },
+    es: { h1:"4 + 1", h2:"Mapea. Valida. Crece. Repite.",
+          contexto:"Contexto General", social:"Escucha Social + ICP",
+          matriz:"Matriz de Producto", pulse:"Pulse 4D",
+          salvar:"Guardar", analisar:"Generar Análisis",
+          dialogo:"El resultado del análisis aparecerá aquí…", idioma:"Idioma:" }
+  };
 
-  // Títulos
-  document.getElementById("title-h1").textContent = t.h1;
-  document.getElementById("title-h2").textContent = t.h2;
-
-  // Labels
-  document.getElementById("lbl-contexto").textContent = t.contexto;
-  document.getElementById("lbl-social").textContent   = t.social;
-  document.getElementById("lbl-matriz").textContent   = t.matriz;
-  document.getElementById("lbl-pulse").textContent    = t.pulse;
-
-  // Botões salvar (4)
-  ["1","2","3","4"].forEach(n =>
-    document.getElementById(`btn-save-${n}`).textContent = t.salvar
-  );
-  document.getElementById("btn-analyze").textContent = t.analisar;
-
-  // Placeholder da caixa de resultado (apenas se estiver vazio)
-  const box = document.getElementById("analysis-box");
-  if (!box.textContent || box.textContent.includes("aparecer")) {
-    box.textContent = t.dialogo;
+  function applyLang(lang) {
+    const t = i18n[lang] || i18n.pt;
+    document.getElementById("title-h1").textContent = t.h1;
+    document.getElementById("title-h2").textContent = t.h2;
+    document.getElementById("lbl-contexto").textContent = t.contexto;
+    document.getElementById("lbl-social").textContent = t.social;
+    document.getElementById("lbl-matriz").textContent = t.matriz;
+    document.getElementById("lbl-pulse").textContent = t.pulse;
+    ["1","2","3","4"].forEach(n =>
+      document.getElementById(`btn-save-${n}`).textContent = t.salvar
+    );
+    document.getElementById("btn-analyze").textContent = t.analisar;
+    const box = document.getElementById("analysis-box");
+    if (!box.textContent || box.textContent.includes("aparecer"))
+      box.textContent = t.dialogo;
+    document.getElementById("lbl-lang").innerHTML = `<strong>🌐 ${t.idioma}</strong>`;
   }
 
-  // Label do seletor
-  document.querySelector("label[for='langSelect']").innerHTML =
-     `<strong>🌐 ${t.idioma}</strong>`;
-}
-// Executa quando usuário troca no dropdown
-document.getElementById("langSelect").addEventListener("change", e => {
-  const lang = e.target.value;
-  localStorage.setItem("lang", lang);
-  applyLang(lang);
-});
+  document.getElementById("langSelect").addEventListener("change", e => {
+    const lang = e.target.value;
+    localStorage.setItem("lang", lang);
+    applyLang(lang);
+  });
 
-// Quando a página carrega, usa o idioma salvo ou pt
-const savedLang = localStorage.getItem("lang") || "pt";
-document.getElementById("langSelect").value = savedLang;
-applyLang(savedLang);
-    function saveField(id) {
-      const value = document.getElementById(id).value.trim();
-      localStorage.setItem(id, value);
-      document.getElementById('hint-' + id).textContent = '✅ Salvo!';
-      setTimeout(() => {
-        document.getElementById('hint-' + id).textContent = '';
-      }, 2000);
-    }
-    function loadFields() {
-      ['field1','field2','field3','field4'].forEach(id => {
-        const saved = localStorage.getItem(id);
-        if (saved) document.getElementById(id).value = saved;
+  const savedLang = localStorage.getItem("lang") || "pt";
+  document.getElementById("langSelect").value = savedLang;
+  applyLang(savedLang);
+
+  /* ===== Funções já existentes ===== */
+  function saveField(id) {
+    const value = document.getElementById(id).value.trim();
+    localStorage.setItem(id, value);
+    document.getElementById('hint-' + id).textContent = '✅ Salvo!';
+    setTimeout(() => { document.getElementById('hint-' + id).textContent = ''; }, 2000);
+  }
+  function loadFields() {
+    ['field1','field2','field3','field4'].forEach(id => {
+      const saved = localStorage.getItem(id);
+      if (saved) document.getElementById(id).value = saved;
+    });
+  }
+
+  async function runAnalysis() {
+    const payload = {
+      contexto: document.getElementById('field1').value.trim(),
+      socialICP: document.getElementById('field2').value.trim(),
+      matrizProduto: document.getElementById('field3').value.trim(),
+      pulse4d: document.getElementById('field4').value.trim(),
+      lang: document.getElementById('langSelect').value
+    };
+
+    const box = document.getElementById('analysis-box');
+    box.textContent = '⏳ Analisando…';
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
+      if (!res.ok) throw new Error('Erro na API');
+      const data = await res.json();
+      box.textContent = data.resultado || '⚠️ Resposta vazia';
+    } catch (err) {
+      console.error(err);
+      box.textContent = '❌ Falha ao gerar análise. Tente de novo.';
     }
-    async function runAnalysis() {
-      const payload.lang = savedLang {
-        contexto: document.getElementById('field1').value.trim(),
-        socialICP: document.getElementById('field2').value.trim(),
-        matrizProduto: document.getElementById('field3').value.trim(),
-        pulse4d: document.getElementById('field4').value.trim(),
-        lang: document.getElementById('langSelect').value
-      };
-      const box = document.getElementById('analysis-box');
-      box.textContent = '⏳ Analisando…';
-      try {
-        const res = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('Erro na API');
-        const data = await res.json();
-        box.textContent = data.resultado || '⚠️ Resposta vazia';
-      } catch (err) {
-        console.error(err);
-        box.textContent = '❌ Falha ao gerar análise. Tente de novo.';
-      }
-    }
-    loadFields();
+  }
+
+  loadFields();
   </script>
 </body>
 </html>
