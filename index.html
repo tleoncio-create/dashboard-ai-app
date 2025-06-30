@@ -169,6 +169,85 @@
   </div>
 
   <script>
+// --- Dicionário de traduções -------------
+const i18n = {
+  pt: {
+    h1: "4 + 1",
+    h2: "Mapeie. Valide. Cresça. Repita.",
+    contexto: "Contexto Geral",
+    social:   "Social Listening + ICP",
+    matriz:   "Matriz de Produto",
+    pulse:    "Pulse 4D",
+    salvar:   "Salvar",
+    analisar: "Gerar Análise",
+    dialogo:  "O resultado da análise aparecerá aqui…",
+    idioma:   "Idioma:"
+  },
+  en: {
+    h1: "4 + 1",
+    h2: "Map. Validate. Grow. Repeat.",
+    contexto: "General Context",
+    social:   "Social Listening + ICP",
+    matriz:   "Product Matrix",
+    pulse:    "Pulse 4D",
+    salvar:   "Save",
+    analisar: "Generate Analysis",
+    dialogo:  "Analysis result will appear here…",
+    idioma:   "Language:"
+  },
+  es: {
+    h1: "4 + 1",
+    h2: "Mapea. Valida. Crece. Repite.",
+    contexto: "Contexto General",
+    social:   "Escucha Social + ICP",
+    matriz:   "Matriz de Producto",
+    pulse:    "Pulse 4D",
+    salvar:   "Guardar",
+    analisar: "Generar Análisis",
+    dialogo:  "El resultado del análisis aparecerá aquí…",
+    idioma:   "Idioma:"
+  }
+};
+function applyLang(lang) {
+  const t = i18n[lang] || i18n.pt;
+
+  // Títulos
+  document.getElementById("title-h1").textContent = t.h1;
+  document.getElementById("title-h2").textContent = t.h2;
+
+  // Labels
+  document.getElementById("lbl-contexto").textContent = t.contexto;
+  document.getElementById("lbl-social").textContent   = t.social;
+  document.getElementById("lbl-matriz").textContent   = t.matriz;
+  document.getElementById("lbl-pulse").textContent    = t.pulse;
+
+  // Botões salvar (4)
+  ["1","2","3","4"].forEach(n =>
+    document.getElementById(`btn-save-${n}`).textContent = t.salvar
+  );
+  document.getElementById("btn-analyze").textContent = t.analisar;
+
+  // Placeholder da caixa de resultado (apenas se estiver vazio)
+  const box = document.getElementById("analysis-box");
+  if (!box.textContent || box.textContent.includes("aparecer")) {
+    box.textContent = t.dialogo;
+  }
+
+  // Label do seletor
+  document.querySelector("label[for='langSelect']").innerHTML =
+     `<strong>🌐 ${t.idioma}</strong>`;
+}
+// Executa quando usuário troca no dropdown
+document.getElementById("langSelect").addEventListener("change", e => {
+  const lang = e.target.value;
+  localStorage.setItem("lang", lang);
+  applyLang(lang);
+});
+
+// Quando a página carrega, usa o idioma salvo ou pt
+const savedLang = localStorage.getItem("lang") || "pt";
+document.getElementById("langSelect").value = savedLang;
+applyLang(savedLang);
     function saveField(id) {
       const value = document.getElementById(id).value.trim();
       localStorage.setItem(id, value);
