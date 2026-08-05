@@ -12,19 +12,18 @@
 
 - [ ] **RG-01** (US-01) — Página de vendas em inglês — `squad-conteudo` — Must · RICE 1890 · 1,0 d-agente · dep: nome ✅ (DF-01), domínio ⛔ PF-02
 - [ ] **RG-02** (US-02) — Checkout internacional + entrega do acesso — `squad-produto` — Must · RICE 1330 · 1,5 d-agente · dep: ⛔ PF-01 (Lemon Squeezy)
-- [ ] **RG-03** (US-03) — Experiment Builder guiado (8 perguntas) — `squad-produto` — Must · RICE 18,9 · 2,0 d-agente · dep: RG-05
 - [ ] **RG-04** (US-04) — Geração do Experiment Card — `squad-produto` — Must · RICE 37,8 · 1,0 d-agente · dep: RG-03
 - [ ] **RG-06** (US-06) — Entrega do card por e-mail + captura de lista — `squad-produto` — Must · RICE 44,8 · 0,5 d-agente · dep: RG-04, ⛔ PF-03
 - [ ] **RG-07** (US-07) — Instrumentação do funil + painel de validação — `squad-produto` — Must · RICE 840 · 1,0 d-agente · dep: RG-02, RG-04
-- [ ] **RG-08** (US-08) — Páginas legais mínimas + garantia de 7 dias — `squad-conteudo` (revisão obrigatória do `qa`) — Must · RICE 1260 · 0,5 d-agente
 - [ ] **RG-09** (US-09) — Campanha de ads com teto de orçamento — `squad-conteudo` — Should · RICE 700 · 1,0 d-agente · dep: go do D7, ⛔ PF-04
 - [ ] **RG-10** (US-10) — Pós-compra: feedback de 1 pergunta + lista de espera — `squad-produto` — Should · RICE 29,4 · 0,5 d-agente
 
 ## 🔨 Em execução
 
-> Limite de WIP: **3 itens**. Ocupado: **1/3**.
+> Limite de WIP: **3 itens**. Ocupado: **2/3**.
 
-- [ ] **RG-05** (US-05) — Biblioteca de 8 experimentos baratos — `squad-conteudo` — Must · RICE 16,3 · 1,5 d-agente — iniciado D1 (não depende do nome nem de credenciais)
+- [ ] **RG-03** (US-03) — Experiment Builder guiado (8 perguntas) — `squad-produto` — Must · RICE 18,9 · 2,0 d-agente — iniciado D1 (RG-05 aprovado destravou)
+- [ ] **RG-08** (US-08) — Páginas legais mínimas + garantia de 7 dias — `squad-conteudo` — Must · RICE 1260 · 0,5 d-agente — iniciado D1
 
 ## 🔍 Em revisão (QA + PM) — DoD nível 1
 
@@ -32,7 +31,8 @@
 
 ## ⏳ Aguardando fundador — DoD nível 2
 
-> vazio — as decisões de D1 (DF-01 a DF-06) já foram respondidas e estão registradas em `decisoes-fundador.md`
+- [x] **RG-05** (US-05) — Biblioteca de 8 experimentos — **DoD nível 1 APROVADA** (QA em D1, 2 rodadas: reprovado BLQ-1 → corrigido → aprovado; commits `986c68b` + `39bf7e2`). Conteúdo vai ao ar dentro do produto → entra no **pacote de aprovação de copy do D3**. Desde D1.
+- Decisões de D1 (DF-01 a DF-06) respondidas e registradas em `decisoes-fundador.md`
 
 ## 🚀 No ar
 
@@ -55,13 +55,18 @@
 
 **Nota do SM**: PF-01 e PF-02 são os dois únicos itens capazes de impedir o lançamento do D7 por causa externa ao time. Ambos aparecem no resumo matinal todos os dias até serem resolvidos.
 
+**Notas do PM (D1, pós-QA do RG-05):**
+1. **OBS-1 do QA vira critério de aceite adicional do RG-03**: a lógica do `budget_note` (exibir quando o teto informado for menor que a rota paga do experimento) é pré-requisito de aprovação do builder, não item pós-lançamento.
+2. **Conflito US-03 AC5 × US-04 AC8 resolvido por decisão do PM**: como a pergunta 5 recusa zero, o terceiro perfil de teste do QA na integração passa a ser "menor verba positiva aceita" (ex.: US$ 10), não US$ 0. PO deve refletir isso no backlog na próxima revisão.
+3. Strings de aviso do filtro: homologadas como copy de produto pelo PM; entram no pacote de aprovação de copy do fundador em D3 (DF pendente).
+
 ---
 
 ## 📉 Burndown — Musts restantes
 
 | Dia | Musts restantes | Esforço Must restante (d-agente) | Observação |
 |-----|-----|-----|-----|
-| D1 (05/08) | **8 de 8** | **9,0** | RG-05 em execução; nenhum item concluído |
+| D1 (05/08) | **7 de 8** | **7,5** | RG-05 aprovado na DoD nível 1 (QA 2 rodadas); RG-03 e RG-08 iniciados |
 | D2 (06/08) | | | |
 | D3 (07/08) | | | |
 | D4 (08/08) | | | |
