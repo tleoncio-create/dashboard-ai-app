@@ -179,8 +179,18 @@
   /* ------------------------------------------------------------------ *
    * State
    * ------------------------------------------------------------------ */
+  /*
+   * answers  — committed values ONLY. Every value in here has passed
+   *            validate() and been through normalize(). Everything downstream
+   *            (recommendations, summary, TYJC.getBuilderState) reads this and
+   *            nothing else, so it can never see "1,000", "abc" or NaN.
+   * drafts   — what the user is currently typing, per question. Persisted too,
+   *            so nothing typed is lost on reload, but never consumed as an
+   *            answer until the step is committed on the way out.
+   */
   var state = {
     answers: {},
+    drafts: {},
     step: 1,
     maxStep: 1,
     completed: [],
@@ -195,12 +205,13 @@
       var saved = JSON.parse(raw);
       if (!saved || typeof saved !== 'object') return false;
       state.answers = saved.answers || {};
+      state.drafts = saved.drafts || {};
       state.step = Math.min(Math.max(saved.step || 1, 1), TOTAL_STEPS);
       state.maxStep = Math.min(Math.max(saved.maxStep || state.step, 1), TOTAL_STEPS);
       state.completed = saved.completed || [];
       state.started = !!saved.started;
       state.selectedExperimentId = saved.selectedExperimentId || null;
-      return Object.keys(state.answers).length > 0;
+      return Object.keys(state.answers).length > 0 || Object.keys(state.drafts).length > 0;
     } catch (err) {
       return false;
     }
@@ -224,6 +235,15 @@
     return (t && q.hint[t]) || q.hint.first_traction;
   }
 
+  /* What the field shows: the draft if the user has touched it, otherwise the
+     committed answer. Only ever read for display and for validation on exit. */
+  function currentValue(q) {
+    if (Object.prototype.hasOwnProperty.call(state.drafts, q.key)) return state.drafts[q.key];
+    return state.answers[q.key];
+  }
+
+  /* Both read committed answers, which are always normalized digits, so
+     parseFloat/parseInt can neither diverge from the stored string nor NaN. */
   function budgetCap() {
     return parseFloat(state.answers.budget);
   }
@@ -389,10 +409,10 @@
       input.type = 'radio';
       input.name = q.key;
       input.value = option.value;
-      input.checked = state.answers[q.key] === option.value;
+      input.checked = currentValue(q) === option.value;
       if (input.checked) wrap.classList.add('option--selected');
       input.addEventListener('change', function () {
-        state.answers[q.key] = option.value;
+        state.drafts[q.key] = option.value;
         save();
         showError(null);
         var all = group.querySelectorAll('.option');
@@ -414,11 +434,11 @@
     field.className = 'field field--text';
     field.id = 'answer';
     field.rows = 3;
-    field.value = state.answers[q.key] || '';
+    field.value = currentValue(q) || '';
     field.placeholder = q.placeholder || '';
     field.setAttribute('aria-describedby', 'question-hint');
     field.addEventListener('input', function () {
-      state.answers[q.key] = field.value;
+      state.drafts[q.key] = field.value;
       save();
     });
     body.appendChild(field);
@@ -431,13 +451,13 @@
     field.type = 'text';
     field.className = 'field field--number';
     field.id = 'answer';
-    field.value = state.answers[q.key] || '';
+    field.value = currentValue(q) || '';
     field.placeholder = q.placeholder || '';
     field.autocomplete = 'off';
     field.setAttribute('inputmode', q.type === 'money' ? 'decimal' : 'numeric');
     field.setAttribute('aria-describedby', 'question-hint');
     field.addEventListener('input', function () {
-      state.answers[q.key] = field.value;
+      state.drafts[q.key] = field.value;
       save();
     });
     wrap.appendChild(field);
@@ -543,6 +563,18 @@
   }
 
   function renderQuestion(focus) {
+    /* Last guard before question 8 reads the cap and the deadline: never draw
+       recommendations off an answer that is not committed and valid. */
+    var redirectMessage = null;
+    if (QUESTIONS[state.step - 1].type === 'pick') {
+      var broken = firstInvalidStep(TOTAL_STEPS - 1);
+      if (broken) {
+        redirectMessage = validate(QUESTIONS[broken - 1], currentValue(QUESTIONS[broken - 1]));
+        state.step = broken;
+        save();
+      }
+    }
+
     var q = QUESTIONS[state.step - 1];
     clear(dom.question);
     showError(null);
@@ -575,6 +607,8 @@
     if (q.type === 'pick' && state.selectedExperimentId) {
       renderSelection();
     }
+
+    if (redirectMessage) showError(redirectMessage);
 
     if (focus) {
       var first = dom.question.querySelector('textarea, input[type="text"]');
@@ -658,27 +692,78 @@
   /* ------------------------------------------------------------------ *
    * Navigation
    * ------------------------------------------------------------------ */
+  /**
+   * The single gate. Validates the draft of one step and, only if it is valid,
+   * writes the normalized value into state.answers. Nothing else in this file
+   * ever writes to state.answers.
+   * @returns {string|null} the error message, or null when the step is committed
+   */
+  function commitStep(n) {
+    var q = QUESTIONS[n - 1];
+    if (q.type === 'pick') return null; // question 8 commits through selectExperiment
+    var message = validate(q, currentValue(q));
+    if (message) return message;
+    state.answers[q.key] = normalize(q, currentValue(q));
+    delete state.drafts[q.key]; // committed — the draft has nothing left to say
+    save();
+    return null;
+  }
+
+  /** First step in 1..upTo whose answer is not valid, or 0 when all are fine. */
+  function firstInvalidStep(upTo) {
+    for (var n = 1; n <= upTo; n++) {
+      var q = QUESTIONS[n - 1];
+      if (q.type === 'pick') continue;
+      if (validate(q, currentValue(q))) return n;
+    }
+    return 0;
+  }
+
+  function focusFirstField() {
+    var field = dom.question.querySelector('textarea, input[type="text"]');
+    if (field) field.focus();
+  }
+
+  /**
+   * Every move between questions goes through here — Next, Back, the numbered
+   * chips and Start over. Moving forward commits (and therefore validates) each
+   * step being left behind or skipped over, and stops on the first invalid one
+   * with the same message Next shows. Moving back never blocks: the draft stays
+   * on screen for the user to fix, while state.answers keeps the last value
+   * that was actually valid.
+   */
   function goTo(step, focus) {
-    state.step = Math.min(Math.max(step, 1), TOTAL_STEPS);
+    var target = Math.min(Math.max(step, 1), TOTAL_STEPS);
+
+    if (target > state.step) {
+      for (var n = state.step; n < target; n++) {
+        var message = commitStep(n);
+        if (message) {
+          if (n !== state.step) {
+            state.step = n; // the broken question may be one we tried to skip
+            save();
+            renderQuestion(true);
+            window.scrollTo(0, 0);
+          }
+          showError(message);
+          focusFirstField();
+          return false;
+        }
+        trackStepCompleted(n);
+      }
+    } else if (target < state.step) {
+      commitStep(state.step); // best effort; an invalid draft simply stays a draft
+    }
+
+    state.step = target;
     if (state.step > state.maxStep) state.maxStep = state.step;
     save();
     renderQuestion(focus);
     window.scrollTo(0, 0);
+    return true;
   }
 
   function next() {
-    var q = QUESTIONS[state.step - 1];
-    var value = state.answers[q.key];
-    var message = validate(q, value);
-    if (message) {
-      showError(message);
-      var field = dom.question.querySelector('textarea, input[type="text"]');
-      if (field) field.focus();
-      return;
-    }
-    state.answers[q.key] = normalize(q, value);
-    save();
-    trackStepCompleted(q.n);
     goTo(state.step + 1, true);
   }
 
@@ -690,6 +775,7 @@
     storage.removeItem(STORAGE_KEY);
     state = {
       answers: {},
+      drafts: {},
       step: 1,
       maxStep: 1,
       completed: [],
@@ -706,14 +792,22 @@
    * Public seam for RG-04 (Experiment Card) and RG-07 (analytics)
    * ------------------------------------------------------------------ */
   TYJC.getBuilderState = function () {
+    /* Committed answers only. budgetCapRaw is the exact string that was
+       validated, budgetCapUsd is that same string as a number and
+       budgetCapDisplay is that same number formatted — the three can never
+       disagree, which is what US-04 AC2 rests on. */
+    var capRaw = state.answers.budget || '';
+    var capUsd = capRaw === '' ? null : parseFloat(capRaw);
+    if (capUsd !== null && !isFinite(capUsd)) capUsd = null;
     return {
       track: track(),
       trackLabel: TRACK_LABELS[track()] || null,
       sells: state.answers.sells || '',
       decision: state.answers.decision || '',
       belief: state.answers.belief || '',
-      budgetCapUsd: isFinite(budgetCap()) ? budgetCap() : null,
-      budgetCapRaw: state.answers.budget || '',
+      budgetCapUsd: capUsd,
+      budgetCapRaw: capRaw,
+      budgetCapDisplay: capUsd === null ? '' : TYJC.formatUsd(capUsd),
       daysAvailable: isFinite(daysAvailable()) ? daysAvailable() : null,
       successSignal: state.answers.signal || '',
       selectedExperimentId: state.selectedExperimentId,
@@ -749,6 +843,13 @@
 
     var restored = load();
     dom.restored.hidden = !restored;
+
+    /* Safety net for a restored session whose stored answers are not valid —
+       for example storage edited by hand, or written by an older version.
+       Land the user on the question that needs fixing instead of rendering
+       recommendations from a broken cap. */
+    var broken = firstInvalidStep(state.step - 1);
+    if (broken) state.step = broken;
 
     dom.form.addEventListener('submit', function (event) {
       event.preventDefault();

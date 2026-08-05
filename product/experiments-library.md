@@ -125,7 +125,7 @@ One page that states the offer **and the price**, and one ad account with a dail
 
 **Step by step**
 
-1. Pick the one page you'll send clicks to. It must show the offer and the price. If you don't have that page, run A1 first — this test is worthless if the destination is vague.
+1. Pick the one page you'll send clicks to. It must show the offer and the price. If you don't have that page, run The Pre-Sale Page first — this test is worthless if the destination is vague.
 2. Write two versions of the same promise. Change **only the headline**. Same picture, same audience, same budget. Two versions, not six.
 3. Before anything goes live, set the hard daily cap in the account: **$10 a day, split evenly between the two versions, for 5 days** — $50 total. Set the end date in the account too. Write both numbers into your card. This is the fence around the test.
 4. Choose the narrowest audience the platform will let you target that still matches your buyer. At this budget, narrow beats broad.

@@ -8,6 +8,12 @@
  * to the user and are deliberately absent from this file.
  *
  * If the .md changes, this file must be updated in the same commit.
+ *
+ * Deliberate wording rule (NB-1, raised by QA on RG-03): experiment IDs are an
+ * internal key. They are never shown to the user, so where the library referred
+ * to a sibling test by ID, this file names it instead — A3, step 1 says "run The
+ * Pre-Sale Page first" and not "run A1 first". The .md was corrected to the same
+ * wording in this change, so the two are mirrored again.
  */
 (function () {
   'use strict';
