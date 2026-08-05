@@ -19,8 +19,9 @@ PM (Product Manager) — coordenação geral
 | PM (Product Manager) | Claude (sessão principal) | Fable 5 |
 | PO (Product Owner) | Agente `product-owner` | Opus |
 | SM (Scrum Master) | Agente `scrum-master` | Opus |
-| Squads | A definir | A definir |
-| QA | A definir | A definir |
+| Squad de produto/engenharia | Agente `squad-produto` | Opus |
+| Squad de conteúdo/growth | Agente `squad-conteudo` | Opus |
+| QA | Agente `qa` | Opus |
 
 Os agentes de PO e SM estão definidos em `.claude/agents/` e podem ser acionados pelo PM a qualquer momento.
 
