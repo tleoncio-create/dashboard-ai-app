@@ -13,10 +13,19 @@
        pages inside /legal/    -> terms.html   (already the case in this folder)
 
      PF-02 (open founder pendency): the domain is not registered yet, so the
-     support address is still a token. Once PF-02 closes, replace every
-     occurrence of support@[DOMAIN-TBD] across this folder and any page that
-     pasted this snippet. This is a tracked external dependency, NOT unfinished
-     copy.
+     support address is still a token. Once PF-02 closes:
+       (1) replace every occurrence of support@[DOMAIN-TBD] across this folder
+           and any page that pasted this snippet — including the mailto: href
+           below, which stays invalid until then;
+       (2) delete the `.tbd` rule from legal.css. That single deletion
+           neutralises all 5 <span class="tbd"> markers at once (1 in
+           terms.html, 2 in privacy.html, 2 in refunds.html); the spans
+           themselves can then be unwrapped at leisure with no visual artefact.
+     This is a tracked external dependency, NOT unfinished copy.
+
+     PENDING PF-01: Lemon Squeezy account not yet created. If the founder picks
+     another Merchant of Record, update all payment-processor mentions in this
+     file — and in every page that pasted this footer.
      ============================================================ -->
 
 <footer class="site-footer">

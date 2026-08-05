@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- PENDING PF-01: Lemon Squeezy account not yet created. If the founder picks
+     another Merchant of Record, update all payment-processor mentions in this file. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -25,10 +27,15 @@
 
 <h2>How to ask</h2>
 
-<!-- PF-02 (founder pendency): domain not registered yet. Replace every
-     occurrence of support@[DOMAIN-TBD] across terms.html, privacy.html and
-     refunds.html once the domain lands, and delete the .tbd spans and the
-     .tbd rule in legal.css. Tracked external dependency, not an unfinished draft. -->
+<!-- PF-02 (founder pendency): domain not registered yet. Once the domain lands:
+     (1) replace every occurrence of support@[DOMAIN-TBD] across terms.html,
+         privacy.html, refunds.html and _footer-snippet.html — including the
+         mailto: hrefs, which stay invalid until then;
+     (2) delete the `.tbd` rule from legal.css. That single deletion neutralises
+         all 5 <span class="tbd"> markers at once (1 in terms.html, 2 in
+         privacy.html, 2 in refunds.html); the spans themselves can then be
+         unwrapped at leisure without any visual artefact.
+     Tracked external dependency, not an unfinished draft. -->
 <p>Email <span class="tbd">support@[DOMAIN-TBD]</span> within 7 days of buying and ask for a refund.</p>
 
 <p>To make it fast, send it from the email address you used at checkout, or include your order number from the receipt. That's the only thing we need in order to find your purchase.</p>
@@ -72,7 +79,7 @@
 <p>See also: <a href="terms.html">Terms of Service</a> · <a href="privacy.html">Privacy Policy</a></p>
 
 <footer class="site-footer">
-  <nav>
+  <nav aria-label="Legal">
     <a href="/">Home</a>
     <a href="terms.html">Terms of Service</a>
     <a href="privacy.html">Privacy Policy</a>
@@ -80,6 +87,7 @@
     <a href="mailto:support@[DOMAIN-TBD]">Contact</a>
   </nav>
   <p>Test Your Jump Cheaply — less risk, more growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+  <p>Full refund within 7 days, no questions asked. <a href="refunds.html">How it works</a>.</p>
 </footer>
 
 </div>

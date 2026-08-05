@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- PENDING PF-01: Lemon Squeezy account not yet created. If the founder picks
+     another Merchant of Record, update all payment-processor mentions in this file. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -61,7 +63,7 @@
 
 <h2>6. What you can and can't do with it</h2>
 
-<p><strong>You can:</strong> use TYJC for your own business or for a business you work in, generate as many Experiment Cards as your purchase allows, print them, share them with your team, and run the experiments however you like. The card you produce is yours to use commercially — that's the entire point of buying it.</p>
+<p><strong>You can:</strong> use TYJC for your own business or for a business you work in, generate as many Experiment Cards as you need for your own business — there is no limit on how many, and no extra charge — print them, share them with your team, and run the experiments however you like. The card you produce is yours to use commercially — that's the entire point of buying it.</p>
 
 <p><strong>Please don't:</strong></p>
 <ul>
@@ -97,17 +99,21 @@
 
 <h2>11. Contact</h2>
 
-<!-- PF-02 (founder pendency): the domain is not registered yet. Replace every
-     occurrence of support@[DOMAIN-TBD] across terms.html, privacy.html and
-     refunds.html once the domain lands, and delete the .tbd spans and the
-     .tbd rule in legal.css. This is a tracked external dependency, not an
-     unfinished draft. -->
+<!-- PF-02 (founder pendency): domain not registered yet. Once the domain lands:
+     (1) replace every occurrence of support@[DOMAIN-TBD] across terms.html,
+         privacy.html, refunds.html and _footer-snippet.html — including the
+         mailto: hrefs, which stay invalid until then;
+     (2) delete the `.tbd` rule from legal.css. That single deletion neutralises
+         all 5 <span class="tbd"> markers at once (1 in terms.html, 2 in
+         privacy.html, 2 in refunds.html); the spans themselves can then be
+         unwrapped at leisure without any visual artefact.
+     Tracked external dependency, not an unfinished draft. -->
 <p>Questions about these terms, or about anything else: <span class="tbd">support@[DOMAIN-TBD]</span></p>
 
 <p>A real person reads that inbox. Ask before you buy if you're unsure — that's cheaper for both of us than a refund.</p>
 
 <footer class="site-footer">
-  <nav>
+  <nav aria-label="Legal">
     <a href="/">Home</a>
     <a href="terms.html">Terms of Service</a>
     <a href="privacy.html">Privacy Policy</a>
@@ -115,6 +121,7 @@
     <a href="mailto:support@[DOMAIN-TBD]">Contact</a>
   </nav>
   <p>Test Your Jump Cheaply — less risk, more growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+  <p>Full refund within 7 days, no questions asked. <a href="refunds.html">How it works</a>.</p>
 </footer>
 
 </div>
