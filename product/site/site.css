@@ -70,6 +70,17 @@ a { color: var(--accent); }
   color: var(--ink-soft);
 }
 
+/* DF-07 brand mark: "- Risk + Growth". The leading minus is part of the
+   identity, so it must not be mistaken for a list bullet or a stray dash —
+   hence its own line, tracked wider, in the brand colour. */
+.brandline {
+  margin: 0 0 16px;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
 .hero__note {
   margin: 10px 0 0;
   font-size: 0.875rem;

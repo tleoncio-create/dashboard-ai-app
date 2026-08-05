@@ -687,6 +687,9 @@
         clear(mount);
       }
     }
+    /* A rendered card already carries every answer, so the review list above
+       it is redundant; card.css hides it through this class. */
+    done.classList.toggle('done--has-card', mount.childNodes.length > 0);
   }
 
   /* ------------------------------------------------------------------ *
@@ -773,6 +776,15 @@
     );
     if (!ok) return;
     storage.removeItem(STORAGE_KEY);
+    /* Other modules (RG-04's card, and later RG-06) hang their own cleanup
+       here so "Start over" really clears everything this device kept. */
+    (TYJC.onReset || []).forEach(function (fn) {
+      try {
+        fn();
+      } catch (err) {
+        /* one module failing to clean up must not block the reset */
+      }
+    });
     state = {
       answers: {},
       drafts: {},
