@@ -20,10 +20,9 @@
 
 ## 🔨 Em execução
 
-> Limite de WIP: **3 itens**. Ocupado: **2/3**.
+> Limite de WIP: **3 itens**. Ocupado: **1/3**.
 
 - [ ] **RG-03** (US-03) — Experiment Builder guiado (8 perguntas) — `squad-produto` — Must · RICE 18,9 · 2,0 d-agente — iniciado D1 (RG-05 aprovado destravou)
-- [ ] **RG-08** (US-08) — Páginas legais mínimas + garantia de 7 dias — `squad-conteudo` — Must · RICE 1260 · 0,5 d-agente — iniciado D1
 
 ## 🔍 Em revisão (QA + PM) — DoD nível 1
 
@@ -32,6 +31,7 @@
 ## ⏳ Aguardando fundador — DoD nível 2
 
 - [x] **RG-05** (US-05) — Biblioteca de 8 experimentos — **DoD nível 1 APROVADA** (QA em D1, 2 rodadas: reprovado BLQ-1 → corrigido → aprovado; commits `986c68b` + `39bf7e2`). Conteúdo vai ao ar dentro do produto → entra no **pacote de aprovação de copy do D3**. Desde D1.
+- [x] **RG-08** (US-08) — Páginas legais — **DoD nível 1 APROVADA** (QA em D1, zero bloqueantes; commit `c823a3c` + ajustes NB-1..NB-6 em aplicação). **ACs condicionais**: AC1 fecha com o rodapé colado nas demais páginas (INT-2); AC3 fecha com PF-02 + teste de e-mail (INT-3). Revalidar menções Lemon Squeezy quando PF-01 fechar (INT-4). Vai ao ar → aprovação do fundador no Go/No-Go de D6.
 - Decisões de D1 (DF-01 a DF-06) respondidas e registradas em `decisoes-fundador.md`
 
 ## 🚀 No ar
@@ -59,6 +59,8 @@
 1. **OBS-1 do QA vira critério de aceite adicional do RG-03**: a lógica do `budget_note` (exibir quando o teto informado for menor que a rota paga do experimento) é pré-requisito de aprovação do builder, não item pós-lançamento.
 2. **Conflito US-03 AC5 × US-04 AC8 resolvido por decisão do PM**: como a pergunta 5 recusa zero, o terceiro perfil de teste do QA na integração passa a ser "menor verba positiva aceita" (ex.: US$ 10), não US$ 0. PO deve refletir isso no backlog na próxima revisão.
 3. Strings de aviso do filtro: homologadas como copy de produto pelo PM; entram no pacote de aprovação de copy do fundador em D3 (DF pendente).
+4. **Itens de verificação de integração (obrigatórios antes do Go/No-Go de D6)**: INT-1 validar Privacy §3/§9 contra o código real do builder (RG-03); INT-2 rodapé legal colado em RG-01/RG-03/RG-04/RG-10; INT-3 substituição do token [DOMAIN-TBD] + remoção da regra .tbd + teste real de e-mail; INT-4 revalidar menções à Lemon Squeezy quando PF-01 fechar.
+5. **Decisão comercial do PM (Terms §6)**: degrau 1 = geração ilimitada de Experiment Cards (sem login não há como impor limite; afirmar limite seria falso).
 
 ---
 
@@ -66,7 +68,7 @@
 
 | Dia | Musts restantes | Esforço Must restante (d-agente) | Observação |
 |-----|-----|-----|-----|
-| D1 (05/08) | **7 de 8** | **7,5** | RG-05 aprovado na DoD nível 1 (QA 2 rodadas); RG-03 e RG-08 iniciados |
+| D1 (05/08) | **6 de 8** | **7,0** | RG-05 e RG-08 aprovados na DoD nível 1; RG-03 em construção; P2 em fundação |
 | D2 (06/08) | | | |
 | D3 (07/08) | | | |
 | D4 (08/08) | | | |
