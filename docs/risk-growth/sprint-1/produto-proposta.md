@@ -36,6 +36,8 @@ O usuário entra com uma dúvida cara ("devo investir em ads?", "esse novo pacot
 
 ## 3. Nome da oferta
 
+> **✅ DECIDIDO pelo fundador em 2026-08-05 (DF-01)**: o nome da oferta é **Test Your Jump Cheaply (TYJC)**, expansão da sigla TYJC trazida pelo próprio fundador. As opções abaixo permanecem como registro histórico da análise.
+
 ### Recomendação primária: **The Small Bet Kit**
 
 - **Tagline**: *Design your first low-risk growth experiment in 30 minutes — before you spend real money.*
