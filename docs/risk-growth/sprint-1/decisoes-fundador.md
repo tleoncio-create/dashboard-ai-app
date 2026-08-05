@@ -10,6 +10,8 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 | DF-04 | 2026-08-05 (D1) | Critério de sucesso do D7 | **Aprendizado validado** — produto no ar, 1 estranho paga/conclui/gera o card, funil instrumentado. Sem meta de faturamento no D7. |
 | DF-05 | 2026-08-05 (D1) | Janela diária de aprovação | **7h–9h** — resumo do SM pronto às 7h; decisões respondidas até as 9h. |
 | DF-06 | 2026-08-05 (D1) | Disponibilidade no fim de semana | **Totalmente disponível** em 08/08 (sáb) e 09/08 (dom) — o plano ganha folga, mas mantém D4–D5 sem dependência obrigatória. |
+| DF-07 | 2026-08-05 (D1) | Identidade da marca | O nome da marca é **"- Risk + Growth"** — o símbolo **"-" (menos) antes de Risk é parte da identidade, sempre** (leitura: menos risco, mais crescimento). Toda menção pública da marca deve usar essa grafia; verificação entra no pacote de copy de D3 e no checklist do QA. O nome do produto de entrada (TYJC) não muda. |
+| DF-08 | 2026-08-05 (D1) | Entidade legal | O fundador atua como **pessoa física** neste primeiro momento. Confirma a decisão de lançar sem cláusula de jurisdição/razão social (merchant of record absorve a responsabilidade fiscal); revisão quando houver PJ. |
 
 ## Pendências que dependem do fundador (abertas)
 

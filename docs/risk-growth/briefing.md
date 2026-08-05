@@ -1,4 +1,6 @@
-# Risk + Growth — Briefing oficial do projeto
+# - Risk + Growth — Briefing oficial do projeto
+
+> **Identidade da marca (DF-07)**: o nome é **"- Risk + Growth"** — o símbolo "-" antes de Risk é parte da identidade e deve ser usado em toda menção pública da marca (leitura: menos risco, mais crescimento).
 
 > Consolidado a partir da sessão de descoberta interativa com o fundador em 2026-08-05.
 > Este documento é a fonte de verdade para PM, PO, SM, squads e QA.
