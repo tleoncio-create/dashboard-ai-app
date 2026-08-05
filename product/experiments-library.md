@@ -127,14 +127,16 @@ One page that states the offer **and the price**, and one ad account with a dail
 
 1. Pick the one page you'll send clicks to. It must show the offer and the price. If you don't have that page, run A1 first — this test is worthless if the destination is vague.
 2. Write two versions of the same promise. Change **only the headline**. Same picture, same audience, same budget. Two versions, not six.
-3. Before anything goes live, set the hard daily cap in the account: $10 a day, with an end date. Write both into your card. This is the fence around the test.
-4. Choose the narrowest audience the platform will let you target that still matches your buyer. At this budget, narrow beats broad every time.
-5. Turn both versions on the same day, at the same budget, and then don't touch them for five days. Editing copy or bids mid-run resets what you were learning.
+3. Before anything goes live, set the hard daily cap in the account: **$10 a day, split evenly between the two versions, for 5 days** — $50 total. Set the end date in the account too. Write both numbers into your card. This is the fence around the test.
+4. Choose the narrowest audience the platform will let you target that still matches your buyer. At this budget, narrow beats broad.
+5. Turn both versions on the same day, at the same budget, and then don't touch them for the full 5 days. Editing copy or bids mid-run resets what you were learning.
 6. Write down three numbers per version each day: money spent, clicks to the page, cost per click. Ignore impressions, likes and shares.
 7. On the read date, compare cost per click and total clicks. If neither version reached roughly 30 clicks, you don't have an answer — say that out loud instead of crowning a winner on six clicks.
 8. Whatever the result, turn the ads off on the end date. The cap *is* the experiment.
 
-**Typical cost**: $60 · **Typical timebox**: 7 days
+**How the 7 days add up**: one day to set up, five days of ads, one day to read. In a hurry, you can set up in the morning of day 1 and read on the evening of day 5 — that's the 5-day floor. If you give it more days, keep the $10 daily cap: 10 days is $100, and that's the most this test is worth.
+
+**Typical cost**: $50 · **Typical timebox**: 7 days
 
 **The most common mistake**
 Splitting a small budget across many versions and audiences, so nothing gets enough clicks to read. The close second: judging by likes and comments. Attention is not the same as someone clicking through to a page with a price on it.
@@ -144,15 +146,15 @@ id: A3
 name: The $50 Cold Click Test
 track: first_traction
 min_budget_usd: 50
-max_budget_usd: 200
-typical_cost_usd: 60
+max_budget_usd: 100
+typical_cost_usd: 50
 min_days: 5
 max_days: 10
 typical_days: 7
 needs_existing_audience: false
 needs_team: false
 recommendation_priority: 3
-budget_note: "Below $50 there aren't enough clicks to read. Needs a destination page that shows the price."
+budget_note: "$10/day for 5 days = $50, the floor for a readable number of clicks. The $100 ceiling is the same $10/day cap held for the full 10 days. Needs a destination page that shows the price."
 ```
 
 ---
@@ -350,10 +352,10 @@ One sentence, one price, one button, and one honest screen behind it.
 7. Track exactly three numbers: people who saw the button, people who clicked it, people who left an email.
 8. On the read date, compare with step 4 and act on it. Below the line, park the idea — and tell the people who left their email, honestly, that it isn't happening yet.
 
-**Typical cost**: $50 · **Typical timebox**: 10 days
+**Typical cost**: $100 · **Typical timebox**: 10 days
 
 **The most common mistake**
-Treating clicks as sales. A click means curiosity, an email means interest, and only money means demand — so if it's a big build, run the Pre-Sale Page (A1) after this one before you write any code. The close second: leaving a fake button live for weeks with nothing honest behind it. That costs trust, which is far more expensive than any test in this library.
+Treating clicks as sales. A click means curiosity, an email means interest, and only money means demand. So if what's behind the door is a big build, run one more round before you write any code: same one sentence and same price, but with a real Buy button and a stated delivery date, sent to the people who left their email. If you then decide not to build it, refund in full the same day. The close second: leaving a fake button live for weeks with nothing honest behind it. That costs trust, which is far more expensive than any test in this library.
 
 ```yaml
 id: B4
@@ -361,14 +363,14 @@ name: The Painted-Door Upgrade
 track: scaling
 min_budget_usd: 0
 max_budget_usd: 300
-typical_cost_usd: 50
+typical_cost_usd: 100
 min_days: 7
 max_days: 14
 typical_days: 10
 needs_existing_audience: false
 needs_team: false
 recommendation_priority: 4
-budget_note: "$0 if people already reach the place you put the button. Otherwise budget ~$100 for the paid or direct route."
+budget_note: "$100 is the typical case: the paid or direct route that sends people to the button. It costs $0 only if people already reach the place you put it."
 ```
 
 ---
@@ -379,12 +381,12 @@ budget_note: "$0 if people already reach the place you put the button. Otherwise
 |---|---|---|---|---|---|---|
 | A1 | The Pre-Sale Page | first_traction | $75 | 10 days | $0–250 | 7–14 |
 | A2 | The 20 Direct Offers | first_traction | $0 | 5 days | $0–50 | 3–7 |
-| A3 | The $50 Cold Click Test | first_traction | $60 | 7 days | $50–200 | 5–10 |
+| A3 | The $50 Cold Click Test | first_traction | $50 | 7 days | $50–100 | 5–10 |
 | A4 | The Five-Post Channel Test | first_traction | $0 | 14 days | $0–25 | 10–14 |
 | B1 | The Two-Price Test | scaling | $150 | 14 days | $0–400 | 7–14 |
 | B2 | The One-Channel Smoke Test | scaling | $400 | 14 days | $250–500 | 10–14 |
 | B3 | The Win/Loss Five | scaling | $125 | 7 days | $0–250 | 5–10 |
-| B4 | The Painted-Door Upgrade | scaling | $50 | 10 days | $0–300 | 7–14 |
+| B4 | The Painted-Door Upgrade | scaling | $100 | 10 days | $0–300 | 7–14 |
 
 No experiment costs more than $500 or runs longer than 14 days. None of them needs a team, an existing audience, or an email list.
 
@@ -411,22 +413,35 @@ Each experiment carries a `yaml` metadata block with these fields:
 
 **Suggested selection rule**
 
-1. Filter by `track` (from question 1).
-2. Keep experiments where `min_budget_usd <= budget_cap` **and** `min_days <= days_available` (questions 5 and 6).
-3. Sort by `recommendation_priority` ascending.
-4. Return the top **3**; return 2 if only 2 survive the filter.
-5. If the filter returns nothing, fall back to the single experiment in that track with the lowest `min_budget_usd` (tie-break: lowest `min_days`) and show the warning below. **Never return an empty list.**
+The user always sees **at least 2 and at most 3** experiments. Never fewer than 2, never an empty list.
 
-**Warning copy when the fallback fires** (choose by which constraint failed — plain English, no promise of a result):
+1. Filter by `track` (from question 1). Only the 4 experiments of that track are ever eligible.
+2. **Clean pass** — keep experiments where `min_budget_usd <= budget_cap` **and** `min_days <= days_available` (questions 5 and 6).
+3. Sort the clean pass by `recommendation_priority` ascending. If **3 or more** survive, return the top 3 and stop. If **exactly 2** survive, return both and stop. Nothing in the clean pass carries a warning.
+4. **Fill-up** — if fewer than 2 survive (0 or 1), top the list up to 3 with the closest misses from the same track. This is the common case, not an edge case: `first_traction` with 3–6 days leaves only A2, and `scaling` with 5–6 days leaves only B3.
+5. Order the candidates for fill-up by **the dimension that failed**:
+   - **Timebox failed** (`min_days > days_available`) → sort candidates by `min_days` ascending, so the first one added is genuinely the fastest test available for that track.
+   - **Only budget failed** (`min_budget_usd > budget_cap`) → sort candidates by `min_budget_usd` ascending, so the first one added is genuinely the cheapest.
+   - **Both failed for everyone** → sort by `min_days` ascending, then by `min_budget_usd` ascending. Time is the harder constraint to stretch, so it leads.
+   - Any tie left after that breaks by `recommendation_priority` ascending, so the same inputs always produce the same list.
+6. Add candidates in that order until the list has 3 (2 is the floor if the track genuinely has nothing else). **Every filled-in experiment carries the warning string matching what it missed**; the ones from the clean pass carry none, so the user can always tell which recommendations fit and which don't.
 
-- Budget too low:
-  > *This is the cheapest test we have for your stage, and it still needs about $[min_budget_usd] to give you a readable answer — more than the $[budget_cap] you set. Either raise your cap to $[min_budget_usd], or run it smaller and treat what you see as a hint, not an answer.*
+**Warning copy** (plain English, states what the test needs — never promises a result):
 
-- Timebox too short:
-  > *This is the fastest test we have for your stage, and it still needs about [min_days] days to give you a readable answer — longer than the [days_available] days you set. Either give it [min_days] days, or accept that you'll be reading a partial result.*
+- **Header line**, shown once above the list whenever at least one item is flagged:
+  > *Only [n] test in this library fits both your $[budget_cap] cap and your [days_available] days. The others below are the closest we have — each one says what it needs.*
 
-- Both:
-  > *No test in this library fits both $[budget_cap] and [days_available] days. This is the closest one: it needs about $[min_budget_usd] and [min_days] days. Stretch one of the two, or run it smaller and treat what you see as a hint, not an answer.*
+  When nothing fit at all (`n = 0`), use instead:
+  > *No test in this library fits both your $[budget_cap] cap and your [days_available] days. These are the closest we have — each one says what it needs.*
+
+- **Budget below range** — on each item where only the budget missed:
+  > *This one needs about $[min_budget_usd] to give you a readable answer — more than the $[budget_cap] you set. Either raise your cap to $[min_budget_usd], or run it smaller and treat what you see as a hint, not an answer.*
+
+- **Timebox too short** — on each item where only the timebox missed:
+  > *This one needs about [min_days] days to give you a readable answer — longer than the [days_available] days you set. Either give it [min_days] days, or accept that you'll be reading a partial result.*
+
+- **Both** — on each item where both missed:
+  > *This one needs about $[min_budget_usd] and [min_days] days to give you a readable answer — more than the $[budget_cap] and the [days_available] days you set. Stretch one of the two, or run it smaller and treat what you see as a hint, not an answer.*
 
 **Feeding the Experiment Card**: the step-by-step becomes field 3 (*The smallest test*); `typical_days` plus the user's start date computes field 5 (*Timebox*); the user's own answer to question 5 — never `typical_cost_usd` — is what goes into field 4 (*Budget cap*).
 
