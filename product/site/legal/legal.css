@@ -1,0 +1,135 @@
+/* TYJC — shared styles for the legal pages (terms, privacy, refunds).
+   Deliberately minimal and semantic: if the main site stylesheet lands later,
+   this file can be dropped and the pages will still read correctly. */
+
+:root {
+  --ink: #16181d;
+  --ink-soft: #545c6b;
+  --rule: #e2e5ea;
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --accent: #1f4fd8;
+  --flag-bg: #fff6e5;
+  --flag-rule: #e8b84b;
+  --flag-ink: #6b4a00;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8eaee;
+    --ink-soft: #a2abba;
+    --rule: #2c313a;
+    --bg: #14161a;
+    --bg-soft: #1b1e24;
+    --accent: #8fb0ff;
+    --flag-bg: #2a2314;
+    --flag-rule: #7a6220;
+    --flag-ink: #e8c778;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 1.25rem;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+.brand {
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+
+.brand span { color: var(--ink-soft); font-weight: 400; }
+
+h1 {
+  font-size: 1.9rem;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  line-height: 1.35;
+  margin: 2.25rem 0 0.6rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+h3 {
+  font-size: 1rem;
+  margin: 1.5rem 0 0.4rem;
+}
+
+p, li { color: var(--ink); }
+
+.dates {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  margin: 0 0 2rem;
+}
+
+.lede {
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+  margin: 0 0 1.5rem;
+}
+
+ul, ol { padding-left: 1.25rem; }
+li { margin-bottom: 0.4rem; }
+
+a { color: var(--accent); }
+
+.callout {
+  background: var(--bg-soft);
+  border-left: 3px solid var(--rule);
+  padding: 0.9rem 1.1rem;
+  margin: 1.25rem 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.callout p:first-child { margin-top: 0; }
+.callout p:last-child { margin-bottom: 0; }
+
+/* PF-02: visual marker for the contact address that still depends on the
+   domain registration. Remove this rule together with the .tbd spans. */
+.tbd {
+  background: var(--flag-bg);
+  border: 1px dashed var(--flag-rule);
+  color: var(--flag-ink);
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+.site-footer {
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.site-footer nav a {
+  margin-right: 1.1rem;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+
+.site-footer p { margin: 0.75rem 0 0; }

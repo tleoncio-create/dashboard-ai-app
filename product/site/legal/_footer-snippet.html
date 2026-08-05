@@ -1,0 +1,32 @@
+<!-- ============================================================
+     TYJC — shared legal footer
+     Handoff from squad-conteudo (RG-08) to squad-produto (RG-01, RG-03, RG-04).
+
+     US-08 acceptance criterion 1 requires Terms, Privacy and Refund Policy to
+     be reachable from the footer of EVERY page. Paste this block at the end of
+     <body> on the sales page, the builder, the card screen and the post-purchase
+     screen. It is plain semantic HTML with no dependency on legal.css — style it
+     with the site stylesheet however you like.
+
+     Adjust the href prefix to your page depth:
+       pages at site root      -> legal/terms.html
+       pages inside /legal/    -> terms.html   (already the case in this folder)
+
+     PF-02 (open founder pendency): the domain is not registered yet, so the
+     support address is still a token. Once PF-02 closes, replace every
+     occurrence of support@[DOMAIN-TBD] across this folder and any page that
+     pasted this snippet. This is a tracked external dependency, NOT unfinished
+     copy.
+     ============================================================ -->
+
+<footer class="site-footer">
+  <nav aria-label="Legal">
+    <a href="/">Home</a>
+    <a href="/legal/terms.html">Terms of Service</a>
+    <a href="/legal/privacy.html">Privacy Policy</a>
+    <a href="/legal/refunds.html">Refund Policy</a>
+    <a href="mailto:support@[DOMAIN-TBD]">Contact</a>
+  </nav>
+  <p>Test Your Jump Cheaply — less risk, more growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+  <p>Full refund within 7 days, no questions asked. <a href="/legal/refunds.html">How it works</a>.</p>
+</footer>
