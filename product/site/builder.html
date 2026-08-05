@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Experiment Builder — Test Your Jump Cheaply</title>
+<link rel="stylesheet" href="builder.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header class="brand">
+    <p class="brand__kicker">Test Your Jump Cheaply</p>
+    <h1 class="brand__title">Experiment Builder</h1>
+    <p class="brand__lead">Eight questions. At the end you pick one cheap test to run yourself — with a spending cap, a deadline and a number that tells you when to stop.</p>
+  </header>
+
+  <p class="notice" id="restored" hidden>
+    We brought back the answers you left on this device. Pick up where you stopped, or
+    <button type="button" class="linkish js-reset">start over</button>.
+  </p>
+
+  <nav class="steps" id="steps" aria-label="Questions"></nav>
+
+  <div class="meta">
+    <p class="meta__progress" id="progress">Question 1 of 8</p>
+    <p class="meta__track" id="track-tag" hidden></p>
+  </div>
+
+  <div class="bar" id="bar-outer" role="progressbar" aria-label="Progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+    <div class="bar__fill" id="bar"></div>
+  </div>
+
+  <form class="builder" id="builder" novalidate>
+    <div class="question" id="question"></div>
+    <p class="error" id="error" role="alert" hidden></p>
+    <div class="nav">
+      <button type="button" class="btn btn--ghost" id="back" hidden>Back</button>
+      <button type="submit" class="btn btn--primary" id="next">Next</button>
+    </div>
+  </form>
+
+  <footer class="foot">
+    <p>Your answers stay in this browser, on this device. Nothing is sent anywhere.</p>
+    <p><button type="button" class="linkish js-reset">Start over</button></p>
+
+    <!-- Legal footer — handoff from squad-conteudo, legal/_footer-snippet.html (RG-08).
+         Copy kept verbatim. Hrefs use the "page at site root" prefix documented in the
+         snippet. The "Home" link is left out on purpose until RG-01 publishes the sales
+         page, so this page ships with no dead link. support@[DOMAIN-TBD] is RG-08's
+         token, tracked under PF-02 (domain not registered yet). -->
+    <nav class="foot__legal" aria-label="Legal">
+      <a href="legal/terms.html">Terms of Service</a>
+      <a href="legal/privacy.html">Privacy Policy</a>
+      <a href="legal/refunds.html">Refund Policy</a>
+      <a href="mailto:support@[DOMAIN-TBD]">Contact</a>
+    </nav>
+    <p>Test Your Jump Cheaply — less risk, more growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+    <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
+  </footer>
+
+</main>
+
+<script src="analytics.js"></script>
+<script src="experiments.js"></script>
+<script src="recommend.js"></script>
+<script src="builder.js"></script>
+</body>
+</html>

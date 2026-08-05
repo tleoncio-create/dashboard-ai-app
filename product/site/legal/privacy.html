@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- PENDING PF-01: Lemon Squeezy account not yet created. If the founder picks
+     another Merchant of Record, update all payment-processor mentions in this file. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -26,7 +28,7 @@
 
 <ul>
   <li><strong>Your email address</strong> — if you give it to us. You give it at checkout (so you get a receipt and your access link) and again if you ask us to email your Experiment Card.</li>
-  <li><strong>Your builder answers</strong> — the eight answers you type about your business and the decision you're stuck on, plus the card generated from them.</li>
+  <li><strong>Your builder answers</strong> — the eight answers you type about your business and the decision you're stuck on, plus the card generated from them. These stay in your own browser while you work, and only reach our servers if you ask us to email you the card. Section 3 explains exactly how that works.</li>
 </ul>
 
 <p>We also collect basic, anonymous usage data about the site itself. See section 5.</p>
@@ -90,10 +92,15 @@
 
 <p>You can ask us at any time to delete your email address, your stored answers, or both.</p>
 
-<!-- PF-02 (founder pendency): domain not registered yet. Replace every
-     occurrence of support@[DOMAIN-TBD] across terms.html, privacy.html and
-     refunds.html once the domain lands, and delete the .tbd spans and the
-     .tbd rule in legal.css. Tracked external dependency, not an unfinished draft. -->
+<!-- PF-02 (founder pendency): domain not registered yet. Once the domain lands:
+     (1) replace every occurrence of support@[DOMAIN-TBD] across terms.html,
+         privacy.html, refunds.html and _footer-snippet.html — including the
+         mailto: hrefs, which stay invalid until then;
+     (2) delete the `.tbd` rule from legal.css. That single deletion neutralises
+         all 5 <span class="tbd"> markers at once (1 in terms.html, 2 in
+         privacy.html, 2 in refunds.html); the spans themselves can then be
+         unwrapped at leisure without any visual artefact.
+     Tracked external dependency, not an unfinished draft. -->
 <p>Email <span class="tbd">support@[DOMAIN-TBD]</span> from the address you used, and say what you want removed. You don't have to give a reason, and asking has no effect on anything you've already bought.</p>
 
 <p>You can also ask us to:</p>
@@ -113,8 +120,12 @@
 <ul>
   <li><strong>If you consented to emails:</strong> we keep your email address until you unsubscribe or ask us to delete it.</li>
   <li><strong>If you didn't consent:</strong> we keep your email only as long as we need it for your receipt, your access link, and any refund window — then it goes.</li>
+  <li><strong>Your builder answers:</strong> the copy in your browser lasts until you clear your browser data. If a copy reached us because you asked for the card by email, we keep it for as long as your email address is on our list — and it is deleted together with your email address when you unsubscribe or ask us to delete you.</li>
+  <li><strong>The copy of your card stored with your email:</strong> same rule. We keep it so we can resend the card if you lose it, and it goes when your email address goes.</li>
   <li><strong>Purchase records:</strong> Lemon Squeezy keeps what tax and accounting rules require them to keep, on their own schedule.</li>
 </ul>
+
+<p>In short: nothing you typed outlives your email address on our list. Delete the address and the answers and the card go with it.</p>
 
 <h2>9. Cookies and local storage</h2>
 
@@ -137,7 +148,7 @@
 <p>Anything about privacy, data, or this page: <span class="tbd">support@[DOMAIN-TBD]</span></p>
 
 <footer class="site-footer">
-  <nav>
+  <nav aria-label="Legal">
     <a href="/">Home</a>
     <a href="terms.html">Terms of Service</a>
     <a href="privacy.html">Privacy Policy</a>
@@ -145,6 +156,7 @@
     <a href="mailto:support@[DOMAIN-TBD]">Contact</a>
   </nav>
   <p>Test Your Jump Cheaply — less risk, more growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+  <p>Full refund within 7 days, no questions asked. <a href="refunds.html">How it works</a>.</p>
 </footer>
 
 </div>

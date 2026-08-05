@@ -235,7 +235,7 @@
   function formatMoney(value) {
     var n = Number(value);
     if (!isFinite(n)) return '';
-    return '$' + (n % 1 === 0 ? String(n) : n.toFixed(2));
+    return TYJC.formatUsd(n); // same formatting as the recommendation warnings
   }
 
   function formatDays(value) {
@@ -538,6 +538,7 @@
     var done = el('div', 'done');
     done.id = 'done';
     done.hidden = true;
+    done.setAttribute('aria-live', 'polite');
     body.appendChild(done);
   }
 
@@ -596,6 +597,10 @@
     }
     trackStepCompleted(8, { experiment_id: id });
     renderSelection();
+    var done = document.getElementById('done');
+    if (done && done.scrollIntoView) {
+      done.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   }
 
   function summaryRows() {

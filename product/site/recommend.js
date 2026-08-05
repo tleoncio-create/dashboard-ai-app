@@ -22,8 +22,13 @@
   function money(value) {
     var n = Number(value);
     if (!isFinite(n)) return '$0';
-    return '$' + (n % 1 === 0 ? String(n) : n.toFixed(2));
+    var text = n % 1 === 0 ? String(n) : n.toFixed(2);
+    var parts = text.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return '$' + parts.join('.');
   }
+
+  TYJC.formatUsd = money;
 
   function days(value) {
     var n = Number(value);
