@@ -21,7 +21,10 @@ PM (Product Manager) — coordenação geral
 | SM (Scrum Master) | Agente `scrum-master` | Opus |
 | Squad de produto/engenharia | Agente `squad-produto` | Opus |
 | Squad de conteúdo/growth | Agente `squad-conteudo` | Opus |
+| Squad de apps (P2) | Agente `squad-apps` | Opus |
 | QA | Agente `qa` | Opus |
+
+> **Convenção de projetos**: **P1** = Risk + Growth / TYJC (este diretório) · **P2** = Plataforma (`docs/p2-plataforma/`). PM, PO, SM e QA atendem os dois projetos; a squad-apps é dedicada ao P2. Até o lançamento do P1 (11/08), o P1 tem prioridade absoluta.
 
 Os agentes de PO e SM estão definidos em `.claude/agents/` e podem ser acionados pelo PM a qualquer momento.
 
