@@ -317,7 +317,10 @@
       });
     });
     lines.push('');
-    lines.push('Test Your Jump Cheaply — less risk, more growth.');
+    /* DF-07: the brand mark is "- Risk + Growth", leading minus included, and
+       it replaces the old "less risk, more growth" tagline wherever the brand
+       is named. Same wording as the rest of the site (legal footer, index). */
+    lines.push('Test Your Jump Cheaply, from - Risk + Growth.');
     return lines.join('\n');
   }
 
@@ -442,7 +445,8 @@
       el(
         'p',
         'card__foot',
-        'Test Your Jump Cheaply — less risk, more growth. You run this test yourself.'
+        /* DF-07 brand mark — see the note in toPlainText above. */
+        'Test Your Jump Cheaply, from - Risk + Growth. You run this test yourself.'
       )
     );
 
