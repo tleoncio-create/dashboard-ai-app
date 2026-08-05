@@ -21,7 +21,7 @@
 
 > Limite de WIP: **3 itens**. Ocupado: **1/3**.
 
-- [ ] **RG-04** (US-04) — Geração do Experiment Card — `squad-produto` — Must · RICE 37,8 · 1,0 d-agente — iniciado D1 (RG-03 aprovado destravou); ler `budgetCapDisplay` do getBuilderState(), nunca reformatar
+- [ ] **RG-04** (US-04) — Geração do Experiment Card — `squad-produto` — Must · RICE 37,8 · 1,0 d-agente — **REPROVADO pelo QA (rodada 1)**: BLQ-1 dois números concorrentes nos campos 6-7; BLQ-2 piso de leitura usado como kill criteria em A3/B1/B3. Aguardando especificação do PO para reabrir o código (commits `84ab57b`).
 
 ## 🔍 Em revisão (QA + PM) — DoD nível 1
 
@@ -30,6 +30,7 @@
 ## ⏳ Aguardando fundador — DoD nível 2
 
 - [x] **RG-05** (US-05) — Biblioteca de 8 experimentos — **DoD nível 1 APROVADA** (QA em D1, 2 rodadas: reprovado BLQ-1 → corrigido → aprovado; commits `986c68b` + `39bf7e2`). Conteúdo vai ao ar dentro do produto → entra no **pacote de aprovação de copy do D3**. Desde D1.
+- [x] **RG-01** (US-01) — Página de vendas — **DoD nível 1 APROVADA** (QA em D1, 1 rodada, zero bloqueantes; commit `49079ad`; headline acima da dobra confirmada em 4 alturas; 23,5 KB, zero rede externa). **AC9 condicional a PF-01** (CTAs com placeholder do checkout). Copy → pacote D3; publicação → PF-02.
 - [x] **RG-03** (US-03) — Experiment Builder — **DoD nível 1 APROVADA** (QA em D1, 2 rodadas: reprovado BLQ-1 chips → corrigido na raiz → aprovado; commits `5b1904a` + `7dadf24`; 60k combinações sem violação; INT-1 confirmado contra o código). Vai ao ar → copy no pacote D3, produto no Go/No-Go D6.
 - [x] **RG-08** (US-08) — Páginas legais — **DoD nível 1 APROVADA** (QA em D1, zero bloqueantes; commit `c823a3c` + ajustes NB-1..NB-6 em aplicação). **ACs condicionais**: AC1 fecha com o rodapé colado nas demais páginas (INT-2); AC3 fecha com PF-02 + teste de e-mail (INT-3). Revalidar menções Lemon Squeezy quando PF-01 fechar (INT-4). Vai ao ar → aprovação do fundador no Go/No-Go de D6.
 - Decisões de D1 (DF-01 a DF-06) respondidas e registradas em `decisoes-fundador.md`
@@ -69,6 +70,7 @@
 | Dia | Musts restantes | Esforço Must restante (d-agente) | Observação |
 |-----|-----|-----|-----|
 | D1 (05/08) | **5 de 8** | **5,0** | RG-05, RG-08 e RG-03 aprovados na DoD nível 1; RG-04 iniciado; P2 em fundação |
+| D2 (06/08) | **4 de 8** | **4,0** | RG-01 aprovado (AC9 condicional a PF-01); RG-04 reprovado rodada 1, aguardando spec do PO |
 | D2 (06/08) | | | |
 | D3 (07/08) | | | |
 | D4 (08/08) | | | |
