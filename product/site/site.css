@@ -1,0 +1,320 @@
+/* TYJC — sales page (RG-01 / US-01).
+   Mobile first: designed at 375px, then widened.
+   Design tokens are deliberately identical to builder.css so the page and the
+   product it sells look like one thing. No external fonts, no images, no
+   network requests of any kind (product CSP is zero external network). */
+
+:root {
+  --ink: #14171a;
+  --ink-soft: #4b545c;
+  --line: #dfe3e8;
+  --bg: #f7f8fa;
+  --card: #ffffff;
+  --accent: #14504b;
+  --accent-soft: #e6f0ee;
+  --warn: #8a5300;
+  --warn-soft: #fdf3e2;
+  --radius: 10px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 20px 16px 56px;
+}
+
+a { color: var(--accent); }
+
+/* ---------------- hero ---------------- */
+
+.hero { padding-bottom: 8px; }
+
+.kicker {
+  margin: 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hero__title {
+  margin: 6px 0 8px;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.hero__tag {
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.hero__lead {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+}
+
+.hero__note {
+  margin: 10px 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+/* ---------------- buttons ---------------- */
+
+.btn {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-weight: 700;
+  min-height: 48px;
+  line-height: 48px;
+  padding: 0 20px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn--primary { background: var(--accent); color: #fff; }
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn__price { font-weight: 400; opacity: 0.92; }
+
+/* ---------------- sections ---------------- */
+
+section { margin-top: 36px; }
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 1.3125rem;
+  line-height: 1.25;
+}
+
+h3 {
+  margin: 20px 0 6px;
+  font-size: 1rem;
+}
+
+p { margin: 0 0 12px; }
+
+.lead { color: var(--ink-soft); }
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.panel--accent {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.quote {
+  margin: 0 0 12px;
+  padding-left: 14px;
+  border-left: 3px solid var(--line);
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+/* ---------------- the eight fields ---------------- */
+
+.fields {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.fields li { margin-bottom: 8px; }
+.fields b { display: inline; }
+.fields span { color: var(--ink-soft); }
+
+/* worked example */
+
+.example {
+  margin-top: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.example__flag {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.875rem;
+  color: var(--warn);
+}
+
+.example__intro { font-size: 0.9375rem; }
+
+.card { margin: 0; }
+
+.card dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.card dt:first-of-type { margin-top: 0; }
+
+.card dd {
+  margin: 3px 0 0;
+  overflow-wrap: break-word;
+}
+
+/* ---------------- steps ---------------- */
+
+.steps-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.steps-list li { margin-bottom: 10px; }
+
+/* ---------------- tracks / who it's for ---------------- */
+
+.tracks { display: grid; gap: 12px; }
+
+.track {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.track h3 { margin: 0 0 4px; }
+.track p { margin: 0; font-size: 0.9375rem; color: var(--ink-soft); }
+
+.notfor {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.notfor li { margin-bottom: 6px; }
+
+/* ---------------- price block ---------------- */
+
+.price {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.price__now {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.price__then {
+  margin: 4px 0 14px;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.price__what {
+  margin: 0 0 16px;
+  text-align: left;
+  padding-left: 20px;
+  font-size: 0.9375rem;
+}
+
+.price__what li { margin-bottom: 6px; }
+
+.price__guarantee {
+  margin: 12px 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.price__guarantee b { color: var(--ink); }
+
+/* ---------------- faq ---------------- */
+
+.faq { margin-top: 8px; }
+
+.faq details {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 24px;
+}
+
+.faq p { margin: 10px 0 0; font-size: 0.9375rem; color: var(--ink-soft); }
+.faq p:last-child { margin-bottom: 0; }
+
+/* ---------------- footer ---------------- */
+
+.foot {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.foot p { margin: 0 0 8px; }
+
+.foot__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0 0 12px;
+}
+
+.foot a { color: var(--accent); }
+
+/* ---------------- wider screens ---------------- */
+
+@media (min-width: 40rem) {
+  .wrap { padding: 32px 24px 72px; }
+  .hero__title { font-size: 2.375rem; }
+  .hero__lead { font-size: 1.0625rem; }
+  h2 { font-size: 1.5rem; }
+  .btn { display: inline-block; width: auto; min-width: 16rem; }
+  .tracks { grid-template-columns: 1fr 1fr; }
+  .price__now { font-size: 2.75rem; }
+}
