@@ -689,7 +689,7 @@
     }
     /* A rendered card already carries every answer, so the review list above
        it is redundant; card.css hides it through this class. */
-    done.classList.toggle('done--has-card', mount.childNodes.length > 0);
+    done.classList.toggle('done--has-card', !!mount.querySelector('#tyjc-card'));
   }
 
   /* ------------------------------------------------------------------ *

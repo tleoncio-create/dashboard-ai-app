@@ -32,6 +32,7 @@
        A1 step 7: "People who reached the page. People who clicked the button." */
     A1: {
       count: 'People who reach the page, and people who click the button after seeing the price. Two numbers a day, nothing else.',
+      kind: 'threshold',
       number: 3,
       unit: 'clicks on the button after the price is visible',
       context: 'out of every 100 people who reach the page'
@@ -40,6 +41,7 @@
        change the offer — not the message." */
     A2: {
       count: 'Every reply from the 20 people you messaged: yes, no or silent — plus the exact words of every no.',
+      kind: 'threshold',
       number: 3,
       unit: 'yes replies',
       context: 'out of the 20 people you message, one at a time'
@@ -48,14 +50,16 @@
        an answer". A3 step 6: spend, clicks, cost per click per version. */
     A3: {
       count: 'Per headline, per day: money spent, clicks to the page, cost per click. Ignore impressions, likes and shares.',
+      kind: 'floor',
       number: 30,
       unit: 'clicks on the stronger headline',
-      context: 'below that there is no answer to read, only noise'
+      context: 'Below that there is no answer to read, only noise'
     },
     /* A4 step 4: "five posts in 12 days: at least 8 replies and 3 people asking
        for the invite." */
     A4: {
       count: 'Per post: replies, people who ask for the invite, and people who then ask what you sell.',
+      kind: 'threshold',
       number: 8,
       unit: 'replies across the five posts',
       context: 'with at least 3 people asking for the invite'
@@ -64,14 +68,18 @@
        if one side gets at least twice the checkout starts." */
     B1: {
       count: 'Per page: visitors, checkout starts, completed purchases. If you take payment by hand, count "said yes to the price".',
+      kind: 'floor',
       number: 200,
       unit: 'visitors on each of the two pages',
-      context: 'and one side needs at least twice the checkout starts to count as a difference'
+      context: 'One side needs at least twice the checkout starts before a price difference is real'
     },
-    /* B2 step 7: "how many of those leads were genuinely your buyer... Five good
-       leads beat forty junk ones." */
+    /* B2 step 7, quoted contiguously: "Five good leads beat forty junk ones."
+       What to count comes from the first half of the same step: "Track per day:
+       spend, leads, cost per lead - and how many of those leads were genuinely
+       your buyer. Check that by hand." */
     B2: {
       count: 'Per day: spend, leads, cost per lead — and how many of those leads were genuinely your buyer, checked by hand.',
+      kind: 'threshold',
       number: 5,
       unit: 'good leads inside the cap',
       context: 'junk leads do not count towards this number'
@@ -80,14 +88,16 @@
        people. That repetition is the finding." */
     B3: {
       count: 'Completed 15-minute calls, and the exact phrases people use — copied word for word, not summarised.',
+      kind: 'floor',
       number: 10,
       unit: 'completed calls',
-      context: 'five who said yes and five who said no, with any phrase repeated by 3 or more people as the finding'
+      context: 'Five who said yes and five who said no, with any phrase repeated by 3 or more people as the finding'
     },
     /* B4 step 4: "fewer than 15 clicks and 5 emails in 10 days means this idea
        is parked, not delayed." */
     B4: {
       count: 'Three numbers only: people who saw the button, people who clicked it, people who left an email.',
+      kind: 'threshold',
       number: 15,
       unit: 'clicks on the button',
       context: 'with at least 5 people leaving an email'
@@ -181,10 +191,51 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * The user's number (spec-card-campos-6-7.md).
+   *
+   * "A autoridade do número é do usuário, sempre." The library number is a
+   * guard rail, never a judge: it may appear labelled "Only readable above"
+   * on a floor test, and it is never what kills a test.
+   *
+   * The target comes from the answer to question 7 when that answer carries a
+   * digit. When it does not, the card is not generated until the user writes
+   * the number here — see renderTargetPrompt.
+   * ------------------------------------------------------------------ */
+  function parseTarget(text) {
+    var source = String(text === undefined || text === null ? '' : text);
+    var match = source.match(/(\d[\d.,]*)\s*(%)?/);
+    if (!match) return null;
+    var number = match[1].replace(/[.,]$/, '') + (match[2] || '');
+    var unit = source
+      .slice(match.index + match[0].length)
+      .replace(/^[\s,;:.\-–—]+/, '')
+      .replace(/[\s.;,!]+$/, '');
+    return { number: number, unit: unit, text: unit ? number + ' ' + unit : number };
+  }
+
+  function hasDigit(text) {
+    return /\d/.test(String(text === undefined || text === null ? '' : text));
+  }
+
+  /* The confirmed number is stored against the question 7 answer it belongs to,
+     so editing question 7 in the builder asks for it again instead of silently
+     keeping a stale target. */
+  function storedTarget(state) {
+    var meta = readMeta();
+    if (!meta.target || meta.targetFor !== state.successSignal) return null;
+    return parseTarget(meta.target);
+  }
+
+  function resolveTarget(state) {
+    if (hasDigit(state.successSignal)) return parseTarget(state.successSignal);
+    return storedTarget(state);
+  }
+
+  /* ------------------------------------------------------------------ *
    * The eight fields. One builder for both the screen card and the plain
    * text copy, so the two can never drift (US-04 AC6).
    * ------------------------------------------------------------------ */
-  function buildCard(state) {
+  function buildCard(state, target) {
     var exp = state.selectedExperiment;
     var rule = RULES[state.selectedExperimentId];
     var start = startDateFor(state.selectedExperimentId);
@@ -247,44 +298,78 @@
         {
           n: 6,
           label: 'Success metric + threshold',
-          blocks: [
-            { pair: ['Count', rule.count] },
-            { pair: ['Yes means', state.successSignal] },
-            {
-              pair: [
-                'The number',
-                'At least ' + rule.number + ' ' + rule.unit + ' by ' + readText + ' — ' + rule.context + '.'
-              ]
+          /* Spec §2-4: Count, then the answer to question 7 verbatim, then the
+             user's own number as the only target. On a floor test the library
+             number follows, labelled so it can never read as a target. */
+          blocks: (function () {
+            var blocks = [
+              { pair: ['Count', rule.count] },
+              { pair: ['Yes means', state.successSignal] },
+              { pair: ['The number', target.text + ' by ' + readText + '.'] }
+            ];
+            if (rule.kind === 'floor') {
+              blocks.push({
+                pair: [
+                  'Only readable above',
+                  'At least ' + rule.number + ' ' + rule.unit + ' by ' + readText + '. ' +
+                    rule.context + '. This is a sample floor, not a target.'
+                ]
+              });
             }
-          ]
+            return blocks;
+          })()
         },
         {
           n: 7,
           label: 'Kill criteria',
-          blocks: [
-            {
-              text:
-                'Fewer than ' + rule.number + ' ' + rule.unit + ' by ' + readText +
-                ' → stop. Do not extend the deadline, do not raise the ' + cap +
-                ' cap, and do not rebuild the test to chase a better number.'
-            },
-            { text: 'Write the result down on ' + readText + ' before you decide anything else.', muted: true }
-          ]
+          /* Spec §6-8: the user's number is what kills the test. On a floor
+             test, missing the library floor means the test never ran — that is
+             inconclusive, not dead, and it never kills the idea. */
+          blocks: (function () {
+            var blocks = [];
+            if (rule.kind === 'floor') {
+              blocks.push({
+                text:
+                  'Fewer than ' + rule.number + ' ' + rule.unit + ' by ' + readText +
+                  ' → inconclusive, not dead. The test did not run; there is no result to read. Rerun it at the same ' +
+                  cap + ' cap with enough volume, or drop the question. Do not crown a winner and do not kill the idea on this.'
+              });
+              blocks.push({
+                text:
+                  'At or above ' + rule.number + ' ' + rule.unit + ', and fewer than ' +
+                  target.text + ' → stop, under the same rules above.'
+              });
+            } else {
+              blocks.push({
+                text:
+                  'Fewer than ' + target.text + ' by ' + readText +
+                  ' → stop. Do not extend the deadline, do not raise the ' + cap +
+                  ' cap, and do not rebuild the test to chase a better number.'
+              });
+            }
+            blocks.push({
+              text: 'Write the result down on ' + readText + ' before you decide anything else.',
+              muted: true
+            });
+            return blocks;
+          })()
         },
         {
           n: 8,
           label: 'If it works / If it doesn’t',
+          /* Spec §8 again: the library number is never the death trigger, so
+             both branches read against the user's number. */
           blocks: [
             {
               pair: [
                 'If it works',
-                'At least ' + rule.number + ' ' + rule.unit + ' by ' + readText + ': you have one readable answer to the bet in field 1 — one answer, not a guarantee about what comes next. Write down what changed your mind, then design the next test with the same four fences: a cap, a date, a number and a stop rule.'
+                'At or above ' + target.text + ' by ' + readText + ': you have one readable answer to the bet in field 1 — one answer, not a guarantee about what comes next. Write down what changed your mind, then design the next test with the same four fences: a cap, a date, a number and a stop rule.'
               ]
             },
             {
               pair: [
                 'If it doesn’t',
-                'Below ' + rule.number + ' ' + rule.unit + ' on ' + readText + ': stop there. Spend ten minutes writing what the result says about the hypothesis in field 2, then change one thing — the offer, the audience or the price — and test that instead. Do not reopen this test with more money.'
+                'Below ' + target.text + ' on ' + readText + ': stop there. Spend ten minutes writing what the result says about the hypothesis in field 2, then change one thing — the offer, the audience or the price — and test that instead. Do not reopen this test with more money.'
               ]
             }
           ]
@@ -412,11 +497,86 @@
     return copied;
   }
 
+  /* ------------------------------------------------------------------ *
+   * Spec §5 — question 7 came back without a digit, so there is no target to
+   * kill the test with. Ask for it here, in the card layer, and generate
+   * nothing until it is confirmed. The builder is untouched (RG-03 frozen).
+   * ------------------------------------------------------------------ */
+  function renderTargetPrompt(state, rule, mount) {
+    var box = el('section', 'target-ask');
+
+    box.appendChild(el('h3', 'target-ask__title', 'One number is missing'));
+    box.appendChild(
+      el(
+        'p',
+        'target-ask__lead',
+        'Your card needs a number to stop on, and "' + state.successSignal +
+          '" does not have one in it. Write the number that counts as yes.'
+      )
+    );
+
+    var label = el('label', 'target-ask__label', 'Write the number that counts as yes');
+    label.setAttribute('for', 'tyjc-target');
+    box.appendChild(label);
+
+    var suggestion = rule.number + ' ' + rule.unit;
+    var field = document.createElement('input');
+    field.type = 'text';
+    field.className = 'field';
+    field.id = 'tyjc-target';
+    field.value = suggestion;
+    field.setAttribute('data-suggestion', suggestion);
+    field.setAttribute('aria-describedby', 'tyjc-target-hint');
+    box.appendChild(field);
+
+    var hint = el(
+      'p',
+      'target-ask__hint',
+      'Suggestion, taken from this test in the library — change it to your own number. It is yours, not ours: it is what the card stops on.'
+    );
+    hint.id = 'tyjc-target-hint';
+    box.appendChild(hint);
+
+    var error = el('p', 'target-ask__error');
+    error.setAttribute('role', 'alert');
+    error.hidden = true;
+    box.appendChild(error);
+
+    var confirm = el('button', 'btn btn--primary', 'Save my number and create the card');
+    confirm.type = 'button';
+    confirm.addEventListener('click', function () {
+      var value = field.value.trim();
+      if (!hasDigit(value)) {
+        error.textContent = 'Write a number — for example "3 sign-ups". Without one, there is nothing to stop on.';
+        error.hidden = false;
+        field.focus();
+        return;
+      }
+      var meta = readMeta();
+      meta.target = value;
+      meta.targetFor = state.successSignal;
+      writeMeta(meta);
+      while (mount.firstChild) mount.removeChild(mount.firstChild);
+      renderCard(TYJC.getBuilderState(), mount);
+    });
+    box.appendChild(confirm);
+
+    mount.appendChild(box);
+  }
+
   function renderCard(state, mount) {
     if (!state || !state.selectedExperiment || !RULES[state.selectedExperimentId]) return;
     if (state.budgetCapDisplay === '' || state.daysAvailable === null) return;
 
-    var card = buildCard(state);
+    var rule = RULES[state.selectedExperimentId];
+    var target = resolveTarget(state);
+    if (!target) {
+      /* No confirmed number, no card — and no card_generated event either. */
+      renderTargetPrompt(state, rule, mount);
+      return;
+    }
+
+    var card = buildCard(state, target);
 
     renderActions(card, mount);
 
@@ -491,6 +651,8 @@
   TYJC.getCardText = function () {
     var state = TYJC.getBuilderState();
     if (!state.selectedExperiment || !RULES[state.selectedExperimentId]) return '';
-    return toPlainText(buildCard(state));
+    var target = resolveTarget(state);
+    if (!target) return ''; // no confirmed number, no card
+    return toPlainText(buildCard(state, target));
   };
 })();

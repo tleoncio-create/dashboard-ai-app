@@ -19,6 +19,49 @@
   display: none;
 }
 
+/* Spec §5 — the missing-number ask that stands in for the card until the user
+   confirms their own target. */
+.target-ask {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.target-ask__title { margin: 0 0 6px; font-size: 1.0625rem; }
+
+.target-ask__lead,
+.target-ask__hint {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.target-ask__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  margin-bottom: 6px;
+}
+
+.target-ask__hint { margin: 6px 0 12px; }
+
+.target-ask__error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: #fdecec;
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.target-ask .btn { width: 100%; min-height: 48px; }
+
+@media (min-width: 40rem) {
+  .target-ask .btn { width: auto; }
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);
