@@ -241,7 +241,7 @@
           blocks: [
             { pair: ['Start', startText] },
             { pair: ['Read the result', readText] },
-            { text: 'That is ' + dayWord(state.daysAvailable) + ', the answer you asked for. You read it on ' + readText + ' and you stop on ' + readText + ', whatever the number says.' }
+            { text: 'That is the ' + dayWord(state.daysAvailable) + ' you asked for. You read the result on ' + readText + ' and you stop the test that day, whatever the number says.' }
           ]
         },
         {
