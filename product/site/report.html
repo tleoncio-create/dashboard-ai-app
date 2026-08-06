@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Validation panel (internal) — TYJC</title>
+<style>
+  :root {
+    --ink: #14171a; --soft: #4b545c; --line: #dfe3e8; --bg: #f7f8fa; --card: #fff;
+    --accent: #14504b; --accent-soft: #e6f0ee; --warn: #8a5300; --warn-soft: #fdf3e2;
+    --bad: #a01b1b; --bad-soft: #fdecec; --good: #1c6b3f; --radius: 10px;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 20px 16px 64px; }
+  h1 { font-size: 1.375rem; margin: 4px 0 6px; }
+  h2 { font-size: 1.0625rem; margin: 28px 0 8px; }
+  p { margin: 0 0 12px; }
+  .lead { color: var(--soft); font-size: 0.9375rem; }
+  .banner {
+    padding: 12px 14px; border-radius: var(--radius); font-size: 0.875rem; margin-bottom: 16px;
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+  }
+  .banner--warn { background: var(--warn-soft); border-left-color: var(--warn); color: var(--warn); }
+  .banner--bad { background: var(--bad-soft); border-left-color: var(--bad); color: var(--bad); }
+  .banner--sample { background: #ffe9b8; border-left-color: #b46b00; color: #6b3f00; font-weight: 700; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  button {
+    font: inherit; font-size: 0.875rem; min-height: 40px; padding: 0 14px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: var(--radius);
+  }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.875rem; background: var(--card); min-width: 44rem; }
+  #panel td:nth-child(3) { min-width: 16rem; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--soft); }
+  td.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pct { font-weight: 700; font-size: 1rem; }
+  .vol { color: var(--soft); font-size: 0.8125rem; display: block; }
+  .tag { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag--hit { background: #e2f2e8; color: var(--good); }
+  .tag--miss { background: var(--bad-soft); color: var(--bad); }
+  .tag--thin { background: var(--warn-soft); color: var(--warn); }
+  .tag--none { background: #eceff1; color: var(--soft); }
+  .log { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.75rem; }
+  .foot { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--soft); font-size: 0.8125rem; }
+  code { background: #eef1f3; padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <p class="banner"><strong>Internal page.</strong> Not linked from the product, marked <code>noindex</code>. It reads the funnel events recorded on <em>this device</em> — it is the stand-in data source until an analytics provider is chosen (see <code>docs/risk-growth/sprint-1/proposta-provedores.md</code>). Once a provider is installed, the same six rows are read from the provider's dashboard with the same definitions.</p>
+
+  <h1>Validation panel — Sprint 1</h1>
+  <p class="lead">The six hypotheses from <code>personas.md</code>. Every percentage carries the absolute volume it was computed from, because a percentage over four visitors is not a finding.</p>
+
+  <div class="controls" id="sources" role="group" aria-label="Data source">
+    <button type="button" data-source="local" aria-pressed="true">This device's events</button>
+    <button type="button" data-source="sample" aria-pressed="false">Sample walkthrough (fixture)</button>
+    <button type="button" id="clear">Clear this device's events</button>
+  </div>
+
+  <div class="controls" id="traffic" role="group" aria-label="Traffic">
+    <button type="button" data-traffic="all" aria-pressed="true">All traffic</button>
+    <button type="button" data-traffic="paid" aria-pressed="false">Paid only</button>
+    <button type="button" data-traffic="organic" aria-pressed="false">Organic only</button>
+  </div>
+
+  <div id="sample-banner" class="banner banner--sample" hidden>SAMPLE DATA — invented figures for testing the panel. Nothing here is a real result, and nothing is written to storage.</div>
+  <div id="size-banner" class="banner banner--warn"></div>
+
+  <h2>The six rows</h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Hypothesis</th><th>Signal</th><th>Target</th><th>Reading</th><th>Status</th></tr>
+      </thead>
+      <tbody id="panel"></tbody>
+    </table>
+  </div>
+
+  <h2>Funnel volumes</h2>
+  <p class="lead">The seven contract events, with paid and organic side by side (US-07 AC4).</p>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr><th>Event</th><th>All</th><th>Paid</th><th>Organic</th><th>Owner / status</th></tr>
+      </thead>
+      <tbody id="funnel"></tbody>
+    </table>
+  </div>
+
+  <h2>Walkthrough check (US-07 AC6)</h2>
+  <p class="lead">Walk the funnel once on this device, reload this page, and every one of the seven should be present and in order.</p>
+  <div id="order" class="banner"></div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>#</th><th>Time</th><th>Event</th><th>Properties</th><th>Traffic</th></tr></thead>
+      <tbody id="log" class="log"></tbody>
+    </table>
+  </div>
+
+  <h2>Privacy self-check (US-07 AC5)</h2>
+  <div id="privacy" class="banner"></div>
+
+  <p class="foot">Definitions are in the page source, next to each row. Event contract: <code>analytics.js</code>. Panel source: <code>personas.md</code>, "Painel de validação".</p>
+
+</main>
+
+<script>window.TYJC_NO_PAGE_VIEW = true;</script>
+<script src="analytics.js"></script>
+<script>
+(function () {
+  'use strict';
+  var TYJC = window.TYJC;
+
+  /* ------------------------------------------------------------------ *
+   * Sample walkthrough — a fixture, never persisted, always labelled.
+   * It exists so the panel can be reviewed before RG-02/RG-06 land and
+   * before a provider is installed.
+   * ------------------------------------------------------------------ */
+  function sampleEvents() {
+    var out = [];
+    var t = Date.parse('2026-08-11T09:00:00Z');
+    function push(name, props, traffic) {
+      t += 60000;
+      var p = {};
+      for (var k in props) if (Object.prototype.hasOwnProperty.call(props, k)) p[k] = props[k];
+      p.traffic = traffic;
+      p.source = traffic === 'paid' ? 'google' : 'direct';
+      p.medium = traffic === 'paid' ? 'cpc' : 'none';
+      p.campaign = traffic === 'paid' ? 'stop-guessing' : 'none';
+      out.push({ name: name, props: p, ts: new Date(t).toISOString() });
+    }
+    var i;
+    for (i = 0; i < 62; i++) push('page_view', { page: 'sales' }, i < 44 ? 'paid' : 'organic');
+    for (i = 0; i < 9; i++) push('checkout_start', {}, i < 6 ? 'paid' : 'organic');
+    for (i = 0; i < 4; i++) push('purchase', { value: 19, currency: 'USD' }, i < 3 ? 'paid' : 'organic');
+    var tracks = ['first_traction', 'first_traction', 'scaling', 'first_traction'];
+    for (i = 0; i < 4; i++) {
+      var traffic = i < 3 ? 'paid' : 'organic';
+      push('page_view', { page: 'builder' }, traffic);
+      push('builder_start', { track: null }, traffic);
+      for (var s = 1; s <= (i === 3 ? 5 : 8); s++) push('builder_step_completed', { step: s, track: tracks[i] }, traffic);
+      if (i !== 3) {
+        push('card_generated', { track: tracks[i], experiment_id: i === 2 ? 'B1' : 'A1' }, traffic);
+        if (i !== 1) push('email_captured', { track: tracks[i] }, traffic);
+      }
+    }
+    push('waitlist_joined', { track: 'scaling' }, 'paid');
+    return out;
+  }
+
+  var state = { source: 'local', traffic: 'all' };
+
+  function allEvents() {
+    return state.source === 'sample' ? sampleEvents() : TYJC.analytics.all();
+  }
+
+  function inTraffic(event) {
+    if (state.traffic === 'all') return true;
+    return (event.props && event.props.traffic) === state.traffic;
+  }
+
+  function count(events, name, test) {
+    return events.filter(function (e) {
+      return e.name === name && (!test || test(e.props || {}));
+    }).length;
+  }
+
+  function pct(num, den) {
+    if (!den) return '—';
+    return (Math.round((num / den) * 1000) / 10).toFixed(1) + '%';
+  }
+
+  function cell(num, den, unitNum, unitDen) {
+    if (den === null) return '<span class="pct">—</span><span class="vol">no data source yet</span>';
+    var over = num > den ? ' <span class="tag tag--thin">over 100%</span>' : '';
+    return '<span class="pct">' + pct(num, den) + '</span>' + over +
+      '<span class="vol">' + num + ' ' + unitNum + ' / ' + den + ' ' + unitDen + '</span>';
+  }
+
+  function status(num, den, target, minDen) {
+    if (den === null) return '<span class="tag tag--none">not instrumented</span>';
+    if (!den) return '<span class="tag tag--none">no data</span>';
+    /* A ratio above 100% is never a finding, it is a definition problem — most
+       often one buyer generating a second card by picking another test. Say so
+       instead of printing "200% completion" as if it meant something. */
+    if (num > den) return '<span class="tag tag--thin">check the definition</span>';
+    if (den < minDen) return '<span class="tag tag--thin">too few to read</span>';
+    return (num / den) >= target
+      ? '<span class="tag tag--hit">on target</span>'
+      : '<span class="tag tag--miss">below target</span>';
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The six rows. Definitions are deliberately written out: the number is
+   * only worth as much as the denominator behind it.
+   * ------------------------------------------------------------------ */
+  function rows(events) {
+    /* The builder sits behind the paywall, so a builder with a track chosen
+       is a buyer — that is what makes step 1 a valid denominator for H1.1/H2.1. */
+    var step1 = count(events, 'builder_step_completed', function (p) { return p.step === 1; });
+    var first = count(events, 'builder_step_completed', function (p) { return p.step === 1 && p.track === 'first_traction'; });
+    var scaling = count(events, 'builder_step_completed', function (p) { return p.step === 1 && p.track === 'scaling'; });
+    var starts = count(events, 'builder_start');
+    var cards = count(events, 'card_generated');
+    var waitlist = count(events, 'waitlist_joined');
+    var sales = count(events, 'page_view', function (p) { return p.page === 'sales'; });
+    var purchases = count(events, 'purchase');
+
+    return [
+      {
+        id: 'H1.1', hypothesis: 'Sam is the majority buyer',
+        signal: '% on the "getting first traction" track',
+        target: '≥ 50%',
+        html: cell(first, step1, 'chose it', 'chose a track'),
+        status: status(first, step1, 0.5, 30)
+      },
+      {
+        id: 'H1.4', hypothesis: 'The artefact is the perceived value',
+        signal: '% who finish the builder — cards generated / builders started',
+        note: 'One buyer can generate a second card by picking another test, so this can pass 100% on a small sample. Unique visitors from the provider are what fix it, not a cap here.',
+        target: '≥ 70%',
+        html: cell(cards, starts, 'cards', 'starts'),
+        status: status(cards, starts, 0.7, 30)
+      },
+      {
+        id: 'H2.1', hypothesis: 'Priya shows up in the paid funnel',
+        signal: '% on the "scaling what works" track',
+        target: '≥ 25%',
+        html: cell(scaling, step1, 'chose it', 'chose a track'),
+        status: status(scaling, step1, 0.25, 30)
+      },
+      {
+        id: 'H2.2', hypothesis: 'Priya wants step 2 of the ladder',
+        signal: '% joining the waiting list (of people who got a card)',
+        target: '≥ 40%',
+        html: waitlist || state.source === 'sample'
+          ? cell(waitlist, cards, 'joined', 'cards')
+          : '<span class="pct">—</span><span class="vol">RG-10 not built: needs a <code>waitlist_joined</code> event</span>',
+        status: waitlist || state.source === 'sample' ? status(waitlist, cards, 0.4, 30) : '<span class="tag tag--none">waiting on RG-10</span>'
+      },
+      {
+        id: 'H2.4', hypothesis: 'One product serves both personas',
+        signal: 'refund rate on the scaling track',
+        target: '< 15%',
+        html: '<span class="pct">—</span><span class="vol">refunds live in Lemon Squeezy; the track is only chosen after the purchase, so the two cannot be joined without personal data</span>',
+        status: '<span class="tag tag--none">not readable this sprint</span>'
+      },
+      {
+        id: 'H0', hypothesis: 'Somebody pays for this',
+        signal: 'visit → purchase conversion (sales page views)',
+        target: '≥ 1.5%',
+        html: cell(purchases, sales, 'purchases', 'sales-page views'),
+        status: status(purchases, sales, 0.015, 1000)
+      }
+    ];
+  }
+
+  var OWNERS = {
+    page_view: 'RG-07 · live',
+    checkout_start: 'RG-02 · blocked by PF-01',
+    purchase: 'RG-02 · blocked by PF-01',
+    builder_start: 'RG-03 · live',
+    builder_step_completed: 'RG-03 · live',
+    card_generated: 'RG-04 · live',
+    email_captured: 'RG-06 · blocked by PF-03'
+  };
+
+  function render() {
+    var all = allEvents();
+    var events = all.filter(inTraffic);
+
+    document.getElementById('sample-banner').hidden = state.source !== 'sample';
+
+    /* sample-size guard, straight from personas.md */
+    var buyers = count(events, 'purchase');
+    var visits = count(events, 'page_view', function (p) { return p.page === 'sales'; });
+    var sizeBanner = document.getElementById('size-banner');
+    if (buyers >= 30 || visits >= 1000) {
+      sizeBanner.className = 'banner';
+      sizeBanner.innerHTML = '<strong>Sample is readable.</strong> ' + buyers + ' buyers, ' + visits + ' qualified visits.';
+    } else {
+      sizeBanner.className = 'banner banner--warn';
+      sizeBanner.innerHTML = '<strong>Below the reading threshold.</strong> ' + buyers +
+        ' buyers and ' + visits + ' sales-page visits — personas.md sets ≥ 30 buyers or ≥ 1,000 visits before these percentages mean anything. Until then they are anecdote, and should be reported to the PM as such.';
+    }
+
+    document.getElementById('panel').innerHTML = rows(events).map(function (r) {
+      return '<tr><td class="num"><strong>' + r.id + '</strong></td><td>' + r.hypothesis +
+        '</td><td>' + r.signal + (r.note ? '<span class="vol">' + r.note + '</span>' : '') +
+        '</td><td class="num">' + r.target + '</td><td class="num">' +
+        r.html + '</td><td>' + r.status + '</td></tr>';
+    }).join('');
+
+    document.getElementById('funnel').innerHTML = TYJC.FUNNEL_ORDER.map(function (name) {
+      var a = count(all, name), paid = count(all.filter(function (e) { return e.props.traffic === 'paid'; }), name);
+      var org = count(all.filter(function (e) { return e.props.traffic === 'organic'; }), name);
+      return '<tr><td><code>' + name + '</code></td><td class="num">' + a + '</td><td class="num">' + paid +
+        '</td><td class="num">' + org + '</td><td>' + OWNERS[name] + '</td></tr>';
+    }).join('');
+
+    /* order check: first occurrence of each contract event must not go backwards */
+    var firstAt = {};
+    all.forEach(function (e, i) {
+      if (!(e.name in firstAt) && TYJC.FUNNEL_ORDER.indexOf(e.name) !== -1) firstAt[e.name] = i;
+    });
+    var missing = TYJC.FUNNEL_ORDER.filter(function (n) { return !(n in firstAt); });
+    var seen = TYJC.FUNNEL_ORDER.filter(function (n) { return n in firstAt; });
+    var ordered = seen.every(function (n, i) { return i === 0 || firstAt[n] > firstAt[seen[i - 1]]; });
+    var orderBox = document.getElementById('order');
+    if (!missing.length && ordered) {
+      orderBox.className = 'banner';
+      orderBox.innerHTML = '<strong>All seven events present, in order.</strong>';
+    } else {
+      orderBox.className = 'banner banner--warn';
+      orderBox.innerHTML = '<strong>Walkthrough incomplete.</strong> ' +
+        (missing.length ? 'Missing: <code>' + missing.join('</code>, <code>') + '</code>. ' : '') +
+        (ordered ? '' : 'Out of order against the contract sequence.');
+    }
+
+    document.getElementById('log').innerHTML = all.slice(-60).map(function (e, i) {
+      var props = {};
+      Object.keys(e.props || {}).forEach(function (k) {
+        if (['traffic', 'source', 'medium', 'campaign'].indexOf(k) === -1) props[k] = e.props[k];
+      });
+      return '<tr><td class="num">' + (i + 1) + '</td><td class="num">' + e.ts.replace('T', ' ').replace(/\..*/, '') +
+        '</td><td>' + e.name + '</td><td>' + (JSON.stringify(props) || '{}') + '</td><td>' + (e.props.traffic || '?') + '</td></tr>';
+    }).join('') || '<tr><td colspan="5">No events on this device yet.</td></tr>';
+
+    /* privacy self-check */
+    var EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+    var offenders = [];
+    all.forEach(function (e) {
+      Object.keys(e.props || {}).forEach(function (k) {
+        var v = e.props[k];
+        if (typeof v === 'string' && (EMAIL.test(v) || v.length > 64)) offenders.push(e.name + '.' + k);
+        if (k === '_dropped') offenders.push(e.name + ' tried to send: ' + v);
+      });
+    });
+    var box = document.getElementById('privacy');
+    if (!offenders.length) {
+      box.className = 'banner';
+      box.innerHTML = '<strong>Clean.</strong> No e-mail address and no free text in any stored event. The allow-list in <code>analytics.js</code> drops anything that is not step, track, experiment id, page, traffic attribution, order id, value or currency.';
+    } else {
+      box.className = 'banner banner--bad';
+      box.innerHTML = '<strong>Something was dropped or leaked:</strong> ' + offenders.join(' · ') +
+        '. Anything listed here means a feature tried to send a property it should not — fix the caller, not the panel.';
+    }
+  }
+
+  function wire(groupId, key) {
+    var group = document.getElementById(groupId);
+    group.addEventListener('click', function (event) {
+      var button = event.target.closest('button[data-' + key + ']');
+      if (!button) return;
+      state[key] = button.getAttribute('data-' + key);
+      Array.prototype.forEach.call(group.querySelectorAll('button[data-' + key + ']'), function (b) {
+        b.setAttribute('aria-pressed', String(b === button));
+      });
+      render();
+    });
+  }
+
+  wire('sources', 'source');
+  wire('traffic', 'traffic');
+
+  document.getElementById('clear').addEventListener('click', function () {
+    if (!window.confirm('Clear the funnel events recorded on this device? This cannot be undone.')) return;
+    TYJC.analytics.clear();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
