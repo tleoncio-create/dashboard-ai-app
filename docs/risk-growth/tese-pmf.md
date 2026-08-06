@@ -37,7 +37,7 @@ Aplicamos ao projeto o mesmo formato que vendemos ao cliente. Se o Experiment Ca
 |---|---|
 | **The bet** | Construir a Experiment Library por assinatura como o produto principal de - Risk + Growth |
 | **The hypothesis** | Empreendedores que pagaram uma vez para desenhar um experimento barato pagarão todo mês para continuar testando — e continuarão usando depois do primeiro mês |
-| **Budget cap** | **R$ 15.000 acumulados** (3 meses no teto do orçamento) + **3 sprints** de capacidade do time. Nada além disso sem replanejamento formal |
+| **Budget cap** | **R$ 8.000 acumulados** (~R$ 2,7k/mês por 3 meses, dentro da faixa de orçamento do briefing) + **3 sprints** de capacidade do time. Definido pelo fundador em D2 (DF-10, reduzido dos R$ 15k propostos). Nada além disso sem replanejamento formal |
 | **Timebox** | Início **2026-08-11 (D7)** · leitura em **2026-11-11 (D+90)**. Data absoluta, não "em 3 meses" |
 | **Success metric + threshold** | **≥ 25 assinantes pagantes ativos** no fim do mês 3, com **churn mensal ≤ 8%** nas duas últimas coortes |
 | **Piso de leitura (não é kill)** | **< 25 assinantes** OU **< 2 coortes mensais completas**: **inconclusivo — não coroa e não mata.** O teste não rodou; não há resultado para ler. Rodar de novo dentro do mesmo teto, ou abandonar a pergunta. Proibido esticar o prazo para perseguir número melhor. |

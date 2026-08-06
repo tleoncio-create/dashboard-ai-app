@@ -12,6 +12,7 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 | DF-06 | 2026-08-05 (D1) | Disponibilidade no fim de semana | **Totalmente disponível** em 08/08 (sáb) e 09/08 (dom) — o plano ganha folga, mas mantém D4–D5 sem dependência obrigatória. |
 | DF-07 | 2026-08-05 (D1) | Identidade da marca | O nome da marca é **"- Risk + Growth"** — o símbolo **"-" (menos) antes de Risk é parte da identidade, sempre** (leitura: menos risco, mais crescimento). Toda menção pública da marca deve usar essa grafia; verificação entra no pacote de copy de D3 e no checklist do QA. O nome do produto de entrada (TYJC) não muda. |
 | DF-09 | 2026-08-06 (D2) | Domínio e e-mail | **lessriskmoregrowth.com** — grafia confirmada com o fundador (corrigido o typo "groeth" da mensagem original). **Registrado via Squarespace** (DNS será apontado no D6). E-mail de contato configurado: **contact@lessriskmoregrowth.com**, aplicado nas 18 ocorrências do site. |
+| DF-10 | 2026-08-06 (D2) | Teto da aposta do degrau 2 | **R$ 8.000 acumulados + 3 sprints**, leitura em 2026-11-11 (D+90) — reduzido dos R$ 15k propostos na tese de PMF. Kill automático pelos critérios de `tese-pmf.md` §3. Autoriza o orçamento da Sprint P2-1. |
 | DF-08 | 2026-08-05 (D1) | Entidade legal | O fundador atua como **pessoa física** neste primeiro momento. Confirma a decisão de lançar sem cláusula de jurisdição/razão social (merchant of record absorve a responsabilidade fiscal); revisão quando houver PJ. |
 
 ## Pendências que dependem do fundador (abertas)
