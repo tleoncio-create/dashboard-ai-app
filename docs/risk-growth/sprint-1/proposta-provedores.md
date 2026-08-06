@@ -22,9 +22,20 @@
 
 Mesma postura de privacidade (sem cookies, open source), com plano gratuito na faixa de volume que teremos no D7 (~700 visitas/mês). API equivalente: `umami.track(e.name, e.props)`. Fica como alternativa e não como recomendação porque o plano gratuito muda com mais frequência e porque o painel é mais cru para o PO ler sozinho. **Vantagem real**: custo US$ 0 e possibilidade de auto-hospedar depois sem trocar de contrato de eventos.
 
-### Rejeitado explicitamente: **Google Analytics 4**
+### ~~Rejeitado explicitamente~~ → **Aceito com condições (DF-11, D2)**: Google Analytics 4
 
-Grátis e familiar, mas usa cookies, alimenta o ecossistema de anúncios do Google (Signals/remarketing) e é classificado como *advertising tracker* por qualquer leitura honesta. Adotá-lo obrigaria a **reescrever a Privacy Policy** e a rever o banner de consentimento — mais caro que os US$ 9/mês, e contradiz a promessa da marca.
+A proposta original rejeitava o GA4 porque ele usa cookies, alimenta o ecossistema de anúncios do Google (Signals/remarketing) e é classificado como *advertising tracker* por qualquer leitura honesta — o que tornaria falsas as promessas públicas da Privacy Policy §5/§9.
+
+**O fundador decidiu rodar os dois em paralelo** (DF-11), com papéis separados: Plausible decide a fase 1, GA4 só acumula histórico de longo prazo (o GA4 não tem retroativo — o que não for coletado hoje não existe depois). A objeção da squad **continua válida e não foi dispensada**; ela vira condição de implementação:
+
+| Condição | Detalhe | Status |
+|---|---|---|
+| Configuração restrita | **Google Signals OFF**, sem *ads personalization*, **sem link com Google Ads**. Nessa configuração o cookie `_ga` é *first-party* e não segue o visitante por outros sites — é o que mantém a frase da §9 verdadeira. | PF-06, fundador |
+| Privacy Policy ajustada | §4 ("an analytics tool" → plural), §5 (a palavra *"anonymous"* deixa de ser exata: o GA4 grava um ID aleatório no cookie — é **pseudônimo**, não anônimo) e §9 (declarar o cookie e o consentimento). | **PF-05, aprovação do fundador** |
+| Banner de consentimento | *Consent Mode*: Plausible dispara sempre; GA4 só para quem aceitar. Consequência aceita: o GA4 enxerga ~70–85% do tráfego, e por isso **nenhum critério de kill/scale se apoia nele**. | squad-produto |
+| Gatilho de revisão | No dia em que o GA4 for vinculado ao Google Ads, a §9 volta a ser falsa e **a política tem de mudar antes**. Registrar como risco vivo, não como item fechado. | PM |
+
+Enquanto PF-05 e PF-06 não fecharem, o sink do GA4 fica no código porém **inerte** (sem *Measurement ID* não dispara nada e não quebra nada).
 
 ---
 
@@ -54,5 +65,6 @@ Formulário embutido que aceita POST público e dispara um automation de boas-vi
 ## Ordem de urgência para o fundador
 
 1. **DNS + conta de e-mail** (propagação é o único item que o time não consegue acelerar) — desbloqueia RG-06.
-2. **Conta de analytics** (15 min, sem dependência externa) — desbloqueia a instalação do sink.
-3. Lemon Squeezy (PF-01) segue sendo o bloqueador maior, fora desta página.
+2. **Conta Plausible** (15 min, sem dependência externa) — desbloqueia a instalação do sink e a leitura da fase 1.
+3. **Aprovar a redação da Privacy Policy (PF-05) + criar a propriedade GA4 (PF-06)** — só depois disso o GA4 sai do estado inerte. Não bloqueia o D7.
+4. Lemon Squeezy (PF-01) segue sendo o bloqueador maior, fora desta página.
