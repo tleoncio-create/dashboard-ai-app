@@ -1,0 +1,16 @@
+# Secrets. The Resend API key, and any provider key that follows it, live in
+# Vercel environment variables — never in the repository. This file exists so a
+# local .env used for testing cannot be committed by accident.
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.vercel/
+dist/
+build/
+
+# OS noise
+.DS_Store
+Thumbs.db
