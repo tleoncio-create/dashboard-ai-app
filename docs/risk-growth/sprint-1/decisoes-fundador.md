@@ -26,24 +26,30 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 | PF-09 | **Decidir o mecanismo do preço de lançamento** (DF-02, US$ 19 para os 100 primeiros): cupom com limite de 100 usos, ou produto/variante separada que é trocada na mão ao atingir 100. Escolha do fundador porque muda o que o cliente vê no checkout e quem controla o corte | Copy dos 3 CTAs e do checkout | Até D4 |
 | PF-02 | ✅ **RESOLVIDO (D2)** — lessriskmoregrowth.com registrado via Squarespace; contact@lessriskmoregrowth.com configurado. Resta apenas o apontamento de DNS para a hospedagem (D6) e o teste real de recebimento (INT-3, QA no D6) | — | Fechado |
 | PF-03 | ✅ **RESOLVIDO (D2)** — conta **Resend** criada pelo fundador, conforme a recomendação da proposta de provedores. Serve ao envio do card (US-06) e ao magic link do P2 sem troca de provedor | — | Fechado |
-| PF-10 | 🟡 **EM ANDAMENTO (D2)** — domínio adicionado no Resend. **DKIM já verificado**; faltam os 2 registros de *Enable Sending*. Detalhe técnico abaixo | US-06 (entrega do card por e-mail) → sem isso a compra não entrega | **Hoje** |
+| PF-10 | ✅ **RESOLVIDO (D2)** — os 3 registros do Resend estão publicados e **confirmados por consulta ao DNS público**, não só pelo painel. Os 4 registros pré-existentes do Google Workspace seguem intactos. Falta apenas o Resend marcar `Verified` na interface dele (leitura do mesmo DNS já propagado). Inventário abaixo | — | Fechado |
 | PF-11 | **API key do Resend → variável de ambiente da Vercel** (`RESEND_API_KEY`), pelo painel da Vercel. ⚠️ **Chave secreta: não colar no chat, em documento nem no repositório.** Quem tem a chave envia e-mail em nome do domínio. Se for exposta por engano, revogar no Resend e gerar outra — é rápido e sem custo | RG-06 (`/api/send-card`) | Até D5 |
 | PF-04 | Conta de anúncios (Google/Meta) com forma de pagamento | US-09 (ads, pós-QA) | Até D6 |
 | PF-05 | ✅ **RESOLVIDO (D2)** — DF-12: o fundador optou por mudar a política em vez de restringir o rastreamento. Privacy Policy §1/§4/§5/§7/§9 reescrita e commitada. Resta apenas a leitura final do fundador antes do D6 (o texto é público e assinado por ele) | — | Fechado |
 | PF-07 | ✅ **RESOLVIDO (D2)** — conta **Plausible** criada pelo fundador. Não exige chave nem ID: o script se identifica pelo domínio (`lessriskmoregrowth.com`, DF-09), já configurado. Duas verificações antes de ligar: (1) a string do site no painel do Plausible tem de bater exatamente com o `domain` do config — divergência não dá erro, só deixa o painel vazio; (2) confirmar que o plano contratado inclui *custom properties*, das quais depende a quebra de funil do US-07 AC4 | — | Fechado |
 | PF-06 | ✅ **RESOLVIDO (D2)** — propriedade GA4 criada; *Measurement ID* **`G-BH0GMH7G4K`** entregue pelo fundador e registrado em `product/site/analytics-config.js`. O snippet padrão do Google **não** será usado literalmente (dispara sem consentimento e violaria a §9); entra via Consent Mode com tudo negado por padrão | — | Fechado |
 
-## DNS do domínio — estado real (PF-10, apurado no D2)
+## DNS do domínio — inventário verificado (PF-10, D2)
 
-O Resend pede **3 registros**, e não os SPF/DKIM/DMARC que a proposta de provedores supôs. **Não há registro DMARC** entre eles (DMARC é recomendação separada, não exigência do Resend).
+Estado conferido em **2026-08-06 por consulta ao DNS público** (resolver do Google, DNS-over-HTTPS), não pelo painel do provedor. O Resend pede **3 registros** — e não os SPF/DKIM/DMARC que a proposta de provedores supôs: **nenhum deles é DMARC** (o `_dmarc` existente é do Google Workspace, anterior).
 
-| # | Type | Host (na Squarespace) | Onde vive | Priority | Status |
-|---|------|----------------------|-----------|----------|--------|
-| 1 | TXT | `resend._domainkey` | verificação DKIM | — | ✅ **Verified** |
-| 2 | MX | `send` | *Enable Sending* | **10** | ⏳ Pending |
-| 3 | TXT | `send` | *Enable Sending* (SPF) | — | ⏳ Pending |
+| Host | Type | Valor publicado | Dono | Mexer? |
+|------|------|-----------------|------|--------|
+| `send` | TXT | `v=spf1 include:amazonses.com ~all` | **Resend** | — |
+| `send` | MX (10) | `feedback-smtp.us-east-1.amazonses.com.` | **Resend** | — |
+| `resend._domainkey` | TXT | `p=MIGfMA0GCSqGSIb3DQEB…` (DKIM) | **Resend** | — |
+| `@` | TXT | `v=spf1 include:_spf.google.com ~all` | Google Workspace | ❌ **não tocar** |
+| `@` | MX (1) | `smtp.google.com.` | Google Workspace | ❌ **não tocar** |
+| `google._domainkey` | TXT | `v=DKIM1; k=rsa; p=MIIBIjANBgkq…` | Google Workspace | ❌ **não tocar** |
+| `_dmarc` | TXT | `v=DMARC1; p=none;` | Google Workspace | ⚠️ ver abaixo |
 
-**Achado que elimina o risco maior:** o SPF do Resend fica no **subdomínio `send`**, não na raiz. A raiz já tem o SPF do Google Workspace (`v=spf1 include:_spf.google.com ~all`), que sustenta o `contact@lessriskmoregrowth.com`. Como são hosts diferentes, **os dois convivem e não há mesclagem a fazer**.
+**O risco que se dissolveu:** o SPF do Resend vive no **subdomínio `send`** e o do Google na **raiz**. Hosts diferentes, registros independentes — nunca houve mesclagem a fazer, e os 4 registros do Google atravessaram a mudança intactos.
+
+**DMARC em `p=none`** é política de observação: nenhum e-mail é bloqueado por falha de autenticação. É o ajuste correto enquanto o envio pelo Resend não tem histórico. Endurecer para `quarantine` é decisão pós-D7, com dados de entrega na mão — **não é tarefa desta sprint**, e apertar antes de o Resend ter histórico é a forma mais fácil de mandar o próprio e-mail transacional para spam.
 
 **Regras de não-quebra, para qualquer pessoa que mexer nesse DNS depois:**
 - **Nunca** criar um segundo TXT `v=spf1` no mesmo host — dois SPF invalidam o SPF do domínio inteiro, pior que nenhum.
