@@ -26,6 +26,7 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 | PF-03 | Conta de e-mail transacional/marketing (o time propõe o provedor) | US-06 | Até D5 |
 | PF-04 | Conta de anúncios (Google/Meta) com forma de pagamento | US-09 (ads, pós-QA) | Até D6 |
 | PF-05 | ✅ **RESOLVIDO (D2)** — DF-12: o fundador optou por mudar a política em vez de restringir o rastreamento. Privacy Policy §1/§4/§5/§7/§9 reescrita e commitada. Resta apenas a leitura final do fundador antes do D6 (o texto é público e assinado por ele) | — | Fechado |
+| PF-07 | ✅ **RESOLVIDO (D2)** — conta **Plausible** criada pelo fundador. Não exige chave nem ID: o script se identifica pelo domínio (`lessriskmoregrowth.com`, DF-09), já configurado. Duas verificações antes de ligar: (1) a string do site no painel do Plausible tem de bater exatamente com o `domain` do config — divergência não dá erro, só deixa o painel vazio; (2) confirmar que o plano contratado inclui *custom properties*, das quais depende a quebra de funil do US-07 AC4 | — | Fechado |
 | PF-06 | ✅ **RESOLVIDO (D2)** — propriedade GA4 criada; *Measurement ID* **`G-BH0GMH7G4K`** entregue pelo fundador e registrado em `product/site/analytics-config.js`. O snippet padrão do Google **não** será usado literalmente (dispara sem consentimento e violaria a §9); entra via Consent Mode com tudo negado por padrão | — | Fechado |
 
 ## Dívida aberta por DF-12 (implementação, não depende do fundador)

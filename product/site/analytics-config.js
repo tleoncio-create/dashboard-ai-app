@@ -38,13 +38,24 @@
 
   window.TYJC_ANALYTICS_CONFIG = {
     /* Plausible — DF-11: the instrument the degrau-2 kill/scale decision reads.
-       Account still pending on the founder; the domain itself is settled
-       (DF-09). Until `enabled` flips, no script is requested. */
+       Account created by the founder on D2. No consent gate applies (no cookie,
+       no device identifier), so this one goes live with the loader in DT-01 and
+       does not wait on the banner.
+
+       `domain` must match the site string registered in the Plausible dashboard
+       character for character. A mismatch does not error anywhere visible — the
+       script loads, the events leave the browser, and the dashboard stays empty.
+       Confirm before flipping `enabled`. */
     plausible: {
       enabled: false,
       domain: 'lessriskmoregrowth.com',
-      /* The variant with custom properties, required by the frozen event
-         contract — the plain script drops props silently. */
+      /* The variant with custom properties AND tagged events, required by the
+         frozen event contract: the plain script accepts the event name and
+         drops every prop silently, which would cost us step, track, source,
+         medium and campaign — i.e. the whole funnel breakdown US-07 AC4 exists
+         for. Verify the account's plan actually includes custom properties
+         before launch; if it does not, the contract still holds but the props
+         are lost, and that is a launch blocker worth knowing about early. */
       src: 'https://plausible.io/js/script.pageview-props.tagged-events.js'
     },
 
