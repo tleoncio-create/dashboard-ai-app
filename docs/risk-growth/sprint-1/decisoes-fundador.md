@@ -26,7 +26,7 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 | PF-03 | Conta de e-mail transacional/marketing (o time propõe o provedor) | US-06 | Até D5 |
 | PF-04 | Conta de anúncios (Google/Meta) com forma de pagamento | US-09 (ads, pós-QA) | Até D6 |
 | PF-05 | ✅ **RESOLVIDO (D2)** — DF-12: o fundador optou por mudar a política em vez de restringir o rastreamento. Privacy Policy §1/§4/§5/§7/§9 reescrita e commitada. Resta apenas a leitura final do fundador antes do D6 (o texto é público e assinado por ele) | — | Fechado |
-| PF-06 | Criar propriedade GA4 em analytics.google.com (grátis, ~10 min) e entregar o *Measurement ID* (`G-XXXXXXX`). **Revisado por DF-12**: a restrição "Signals desligado / sem link com Google Ads" deixa de ser obrigatória — a política agora cobre remarketing. Continua sendo escolha do fundador ligar ou não o Signals no cadastro | Ativação do GA4 | Até D5 |
+| PF-06 | ✅ **RESOLVIDO (D2)** — propriedade GA4 criada; *Measurement ID* **`G-BH0GMH7G4K`** entregue pelo fundador e registrado em `product/site/analytics-config.js`. O snippet padrão do Google **não** será usado literalmente (dispara sem consentimento e violaria a §9); entra via Consent Mode com tudo negado por padrão | — | Fechado |
 
 ## Dívida aberta por DF-12 (implementação, não depende do fundador)
 
@@ -34,7 +34,7 @@ A Privacy Policy §9 passou a prometer três coisas que o site **ainda não faz*
 
 | # | Item | Dono | Prazo |
 |---|------|------|-------|
-| DT-01 | **Banner de consentimento com bloqueio prévio** — analytics/ads não disparam até o aceite (Consent Mode). Plausible dispara sempre, por não usar cookie | squad-produto | Antes do D6 |
+| DT-01 | **Banner de consentimento com bloqueio prévio** — analytics/ads não disparam até o aceite. Plausible dispara sempre, por não usar cookie. GA4 entra por **Consent Mode v2 com `analytics_storage`/`ad_storage`/`ad_user_data`/`ad_personalization` = denied** por padrão; o aceite é que concede. IDs já configurados em `analytics-config.js` (ambos com `enabled: false` até o banner existir) | squad-produto | Antes do D6 |
 | DT-02 | **Link "Cookie settings" no rodapé** reabrindo o banner — a §9 promete que retirar o consentimento é tão fácil quanto dar | squad-produto | Antes do D6 |
 | DT-03 | Atualizar o cabeçalho de `product/site/analytics.js`, que ainda cita *"anonymous analytics"* e *"no advertising trackers"* como contrato da política. **Bloqueado até o veredito do QA no RG-07** (mesmo arquivo sob teste) | squad-produto | Após veredito RG-07 |
 | DT-04 | Bateria de QA específica: banner bloqueia de fato antes do aceite, recusa mantém o Plausible contando, e o `sanitize()` continua barrando e-mail/respostas com os dois sinks instalados | qa | D6 |
