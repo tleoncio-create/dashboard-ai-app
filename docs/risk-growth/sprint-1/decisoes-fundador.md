@@ -21,7 +21,9 @@ Fonte de rastreabilidade das aprovações de nível 2 (DoD) e decisões de negó
 
 | # | Item | Bloqueia | Prazo |
 |---|------|----------|-------|
-| PF-01 | Criar conta no **Lemon Squeezy** e compartilhar acesso para integração | US-02 (checkout) → D6–D7 | Até D3 (sexta 07/08) |
+| PF-01 | ✅ **RESOLVIDO (D2)** — conta **Lemon Squeezy** criada pelo fundador. Confirma DF-03 como Merchant of Record definitivo; os 5 arquivos do site que traziam o aviso provisório de MoR foram limpos | — | Fechado |
+| PF-08 | **Loja + produto + link de checkout no Lemon Squeezy.** Conta não é link de compra: falta criar a *store*, o produto com o preço do DF-02 (US$ 29, com US$ 19 para os 100 primeiros) e **ativar a loja para pagamentos reais** (a plataforma revisa a loja antes de liberar — é o único passo com prazo fora do nosso controle). Entregar ao time a **URL pública de checkout**. Não enviar API key | US-02 (checkout) → RG-02 substitui os 3 botões de `index.html` | Até D4 |
+| PF-09 | **Decidir o mecanismo do preço de lançamento** (DF-02, US$ 19 para os 100 primeiros): cupom com limite de 100 usos, ou produto/variante separada que é trocada na mão ao atingir 100. Escolha do fundador porque muda o que o cliente vê no checkout e quem controla o corte | Copy dos 3 CTAs e do checkout | Até D4 |
 | PF-02 | ✅ **RESOLVIDO (D2)** — lessriskmoregrowth.com registrado via Squarespace; contact@lessriskmoregrowth.com configurado. Resta apenas o apontamento de DNS para a hospedagem (D6) e o teste real de recebimento (INT-3, QA no D6) | — | Fechado |
 | PF-03 | Conta de e-mail transacional/marketing (o time propõe o provedor) | US-06 | Até D5 |
 | PF-04 | Conta de anúncios (Google/Meta) com forma de pagamento | US-09 (ads, pós-QA) | Até D6 |
