@@ -28,6 +28,8 @@ PM (Product Manager) — coordenação geral
 
 Os agentes de PO e SM estão definidos em `.claude/agents/` e podem ser acionados pelo PM a qualquer momento.
 
+> **Skills de persona** (`.claude/skills/`): os papéis de coordenação também existem como skills invocáveis pelo fundador em qualquer sessão — `/pm`, `/po` e `/sm`. A skill assume o papel na sessão atual (conversa direta); o agente é despachado pelo PM e devolve um artefato. Para PO e SM, a definição canônica do papel continua sendo o arquivo do agente — as skills apontam para ele e não o duplicam.
+
 ## Atribuições
 
 ### PM — Product Manager (coordenação geral)
