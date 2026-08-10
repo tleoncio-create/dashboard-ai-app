@@ -20,22 +20,54 @@
  * medium / campaign), which is what lets report.html separate paid from
  * organic (US-07 AC4).
  *
- * PRIVACY (US-07 AC5, and Privacy Policy §5/§9 — "anonymous analytics", "no
- * advertising trackers"): the e-mail address and every free-text answer the
- * user types are NEVER part of an event. That is not left to good intentions:
- * sanitize() below drops any property that is not on the allow-list, and drops
- * any value that looks like an e-mail address, whatever the key is called.
+ * PRIVACY (US-07 AC5). The Privacy Policy in force is the one rewritten in
+ * c4f8c54 (DF-12); the older wording this header used to cite ("anonymous
+ * analytics", "no advertising trackers") was revoked there and must not be
+ * quoted again. Two live promises, two owners:
+ *
+ *   §5 — "Your email address is never sent to our analytics or advertising
+ *        tools. Neither are your builder answers. ... the code that records
+ *        these events drops anything that looks like an email address and
+ *        anything that isn't on a fixed list of allowed fields, whatever it's
+ *        called." That code is sanitize() below: allow-list by name, e-mail
+ *        test on every value, and the same test on the key names echoed back
+ *        in _dropped (a key can be free text too — BLQ-3).
+ *   §9 — "Analytics and advertising cookies only run if you accept them."
+ *        Owned by consent.js. This file loads nothing and sets no cookie: it
+ *        records to the visitor's own device and hands events to whatever
+ *        sink consent.js installs, if any.
  *
  * INSTALLING A PROVIDER (the one open decision — see
  * docs/risk-growth/sprint-1/proposta-provedores.md):
  *
  *   TYJC.analytics.install(function (event) {
- *     // event = { name, props, ts }  — already sanitized
+ *     // event = { name, props, ts, seq }  — already sanitized
  *     provider.track(event.name, event.props);   // e.g. plausible / umami
  *   });
  *
- * install() replays everything already recorded on this device, so it does not
- * matter whether the provider script loads before or after the funnel starts.
+ * DELIVERY MARK (BLQ-2). Every recorded event gets a sequence number (`seq`),
+ * and localStorage keeps, next to the store, the highest seq already handed to
+ * a sink. install() replays only what is past that mark and then advances it;
+ * track() advances it for each event it hands over live. So:
+ *
+ *   - a provider that loads late still gets the start of the funnel, because
+ *     everything not yet delivered is replayed exactly once;
+ *   - install() called on ten page loads delivers each event once, not ten
+ *     times. Before the mark existed, install() replayed the whole store every
+ *     page load and inflated the volume that decides degrau 2 by up to 5.5x;
+ *   - clear() drops the mark with the store, so a wiped device starts over.
+ *
+ * "Delivered" means "handed to the sink". If the sink throws, the event is not
+ * re-queued: a provider that fails on an event will fail on the replay too,
+ * and an analytics retry loop is not worth a page load.
+ *
+ * A store written before the mark existed (no seq on its events) is adopted as
+ * ALREADY delivered on first read. Under the old code those events had already
+ * been sent — repeatedly — if any sink was installed, and if none was, there
+ * was no provider to lose them; back-filling them into a provider that goes
+ * live today would only stamp last week's visits with today's date, since a
+ * provider timestamps on receipt and ignores event.ts.
+ *
  * Nothing here retries or buffers across devices: a dropped event is lost, and
  * that is the correct trade for a page that must never block on analytics.
  */
@@ -69,6 +101,7 @@
 
   var STORE_KEY = 'tyjc.analytics.v1';
   var ATTRIB_KEY = 'tyjc.attrib.v1';
+  var MARK_KEY = 'tyjc.analytics.mark.v1'; // the delivery mark — see the header
   var MAX_STORED = 500; // oldest fall off first; this is a funnel, not an archive
 
   /* Only these property names may travel. Anything else is dropped by name. */
@@ -106,6 +139,75 @@
     } catch (err) {
       return false;
     }
+  }
+
+  function isArray(value) {
+    return Object.prototype.toString.call(value) === '[object Array]';
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The delivery mark (BLQ-2)
+   *
+   *   { next: the sequence number the next recorded event will get,
+   *     delivered: the highest sequence number already handed to a sink }
+   *
+   * It lives beside the store, under its own key, so the store stays the plain
+   * array report.html and the QA fixtures already read.
+   * ------------------------------------------------------------------ */
+  function readMark() {
+    var mark = readJson(MARK_KEY, null);
+    if (!mark || typeof mark.next !== 'number' || typeof mark.delivered !== 'number') return null;
+    if (!isFinite(mark.next) || !isFinite(mark.delivered)) return null;
+    return { next: mark.next, delivered: mark.delivered };
+  }
+
+  /**
+   * Reads the store and the mark together, repairing both if needed, and
+   * returns { events, mark }. Events written before the mark existed are
+   * stamped with a sequence number here and counted as already delivered —
+   * see "DELIVERY MARK" in the header for why that is the honest default.
+   */
+  function loadState() {
+    var raw = readJson(STORE_KEY, []);
+    var events = isArray(raw) ? raw : [];
+    var stored = readMark();
+    var mark = stored || { next: 1, delivered: 0 };
+    var dirty = !stored;
+    var highest = 0;
+
+    events.forEach(function (event) {
+      if (!event || typeof event !== 'object') return;
+      if (typeof event.seq !== 'number' || !isFinite(event.seq)) {
+        event.seq = mark.next;
+        mark.next += 1;
+        if (event.seq > mark.delivered) mark.delivered = event.seq;
+        dirty = true;
+      }
+      if (event.seq > highest) highest = event.seq;
+    });
+
+    /* A mark that lost track of the store (mark key cleared on its own, or a
+       hand-seeded store) must never hand out a number already in use. */
+    if (mark.next <= highest) {
+      mark.next = highest + 1;
+      dirty = true;
+    }
+
+    if (dirty) {
+      writeJson(STORE_KEY, events);
+      writeJson(MARK_KEY, mark);
+    }
+    return { events: events, mark: mark };
+  }
+
+  /* Moves the mark forward — never backward — after an event has been handed
+     to a sink. */
+  function noteDelivered(seq) {
+    if (typeof seq !== 'number' || !isFinite(seq)) return;
+    var mark = readMark();
+    if (!mark || seq <= mark.delivered) return;
+    mark.delivered = seq;
+    writeJson(MARK_KEY, mark);
   }
 
   /* ------------------------------------------------------------------ *
@@ -187,18 +289,37 @@
       }
       if (text !== '') clean[key] = text;
     });
-    if (dropped.length) clean._dropped = dropped.join(','); // key names only, never values
+    /* BLQ-3: key names only, never values — but a key name IS free text (a
+       caller can pass { 'sam@example.com': 1 }), so every name goes through
+       the same ruler as a value: e-mail-shaped names are dropped, long ones
+       are truncated at 64. A name that survives as nothing still counts, as
+       "redacted", so the panel keeps the signal that something was refused. */
+    if (dropped.length) {
+      clean._dropped = dropped.map(function (name) {
+        return shortText(name) || 'redacted';
+      }).join(',').slice(0, MAX_VALUE_LEN);
+      /* The ceiling applies to the joined report too, so "no string in props is
+         longer than 64" is an invariant the panel can check without
+         exceptions. Truncating here cannot bring an e-mail back: a name that
+         looked like one was already replaced whole, before the join. */
+    }
     return clean;
   }
 
   /* ------------------------------------------------------------------ *
    * Recording
    * ------------------------------------------------------------------ */
+  /* Stamps the event with its sequence number and stores it. */
   function persist(event) {
-    var stored = analytics.all();
+    var state = loadState();
+    event.seq = state.mark.next;
+    state.mark.next += 1;
+
+    var stored = state.events;
     stored.push(event);
     if (stored.length > MAX_STORED) stored = stored.slice(stored.length - MAX_STORED);
     writeJson(STORE_KEY, stored);
+    writeJson(MARK_KEY, state.mark);
   }
 
   /**
@@ -224,6 +345,10 @@
       } catch (err) {
         /* analytics must never break the product */
       }
+      /* Handed over live, so the next page load's install() must not replay
+         it. This is the other half of BLQ-2: without it the mark would only
+         ever cover what install() itself replayed. */
+      noteDelivered(event.seq);
     }
     return event;
   };
@@ -234,8 +359,7 @@
 
   /** Everything recorded on this device, oldest first. */
   analytics.all = function () {
-    var stored = readJson(STORE_KEY, []);
-    return Object.prototype.toString.call(stored) === '[object Array]' ? stored : [];
+    return loadState().events;
   };
 
   /**
@@ -248,6 +372,10 @@
     try {
       window.localStorage.removeItem(STORE_KEY);
       window.localStorage.removeItem(ATTRIB_KEY);
+      /* The delivery mark goes with them: a device whose record was wiped must
+         start counting from one, not from a mark pointing past events that no
+         longer exist. */
+      window.localStorage.removeItem(MARK_KEY);
     } catch (err) {
       /* nothing stored */
     }
@@ -255,20 +383,35 @@
   };
 
   /**
-   * Installs the provider. Replays what is already on this device so the
-   * provider never misses the start of a funnel it loaded late.
+   * Installs the provider and replays what this device recorded and has NOT
+   * yet delivered, so a provider that loads late still gets the start of the
+   * funnel — and gets it once, not once per page load (BLQ-2).
    * @param {function(Object)} sink
    */
   analytics.install = function (sink) {
     if (typeof sink !== 'function') return;
     analytics.sink = sink;
-    analytics.all().forEach(function (event) {
+
+    var state = loadState();
+    var mark = state.mark;
+    var floor = mark.delivered;
+    var highest = floor;
+
+    state.events.forEach(function (event) {
+      var seq = event && typeof event.seq === 'number' ? event.seq : 0;
+      if (seq <= floor) return;
       try {
         sink(event);
       } catch (err) {
-        /* one bad replay must not stop the rest */
+        /* one bad replay must not stop the rest — and does not earn a retry */
       }
+      if (seq > highest) highest = seq;
     });
+
+    if (highest > mark.delivered) {
+      mark.delivered = highest;
+      writeJson(MARK_KEY, mark);
+    }
   };
 
   analytics.attribution = attribution;

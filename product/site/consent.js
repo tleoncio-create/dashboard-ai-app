@@ -108,13 +108,30 @@
   /* ------------------------------------------------------------------ *
    * Sinks — one fan-out installed once, providers registered as they go live
    *
-   * TYJC.analytics.install() replays everything recorded ON THIS DEVICE, which
-   * includes previous page loads and previous visits. Forwarding that replay
-   * verbatim on every page load would re-send the whole history to the
-   * provider on each navigation. So the fan-out forwards only events belonging
-   * to THIS page load — TYJC.analytics.events is documented as "this page load
-   * only" — which also means a provider that goes live mid-visit (GA4, right
-   * after Accept) never back-fills events recorded before the visitor said yes.
+   * This file used to drop EVERY replayed event and forward only what the
+   * current page load produced. That blanket filter was a patch over BLQ-2 in
+   * analytics.js: install() re-sent the whole local store on every page load,
+   * and the filter was the only thing keeping ten page views from arriving as
+   * fifty-five. analytics.js now owns that problem properly — it keeps a
+   * persisted delivery mark and replays each event exactly once, ever — so the
+   * blanket filter is gone.
+   *
+   * What stays, deliberately narrowed to the sinks that need it, is the
+   * consent rule. A consent-gated provider must never receive anything the
+   * visitor recorded before saying yes, and "since the visitor said yes" is in
+   * practice "this page load": GA4 is registered from ga4Grant(), which runs
+   * either at boot on a stored Accept or on the Accept click itself. So:
+   *
+   *   plausible : may receive the replay. No cookie, no identifier, nothing to
+   *               consent to (§5), and it is the instrument the degrau-2
+   *               decision reads — it is exactly who the "a provider that
+   *               loads late does not lose the start of the funnel" promise in
+   *               analytics.js is for.
+   *   ga4       : pageLoadOnly. Never back-filled, whatever order the sinks
+   *               happen to register in — including the case where Plausible
+   *               is disabled in the config and GA4 is the first sink, which
+   *               would otherwise hand Google a week of history the visitor
+   *               consented to yesterday at the earliest.
    * ------------------------------------------------------------------ */
   var sinks = [];
   var installed = false;
@@ -138,32 +155,44 @@
     return false;
   }
 
-  function fanout(event) {
-    if (!event || !isThisPageLoad(event)) return;
+  function deliver(entry, event) {
     var key = eventKey(event);
+    if (entry.seen[key]) return;
+    entry.seen[key] = true;
+    try {
+      entry.send(event);
+    } catch (err) {
+      /* analytics must never break the product */
+    }
+  }
+
+  function fanout(event) {
+    if (!event) return;
     sinks.forEach(function (entry) {
-      if (entry.seen[key]) return;
-      entry.seen[key] = true;
-      try {
-        entry.send(event);
-      } catch (err) {
-        /* analytics must never break the product */
-      }
+      if (entry.pageLoadOnly && !isThisPageLoad(event)) return;
+      deliver(entry, event);
     });
   }
 
-  function addSink(send) {
+  function addSink(send, pageLoadOnly) {
     if (!hasContract()) return;
-    var entry = { send: send, seen: {} };
+    var entry = { send: send, seen: {}, pageLoadOnly: !!pageLoadOnly };
     sinks.push(entry);
     if (!installed) {
       installed = true;
-      /* install() replays this device's record into fanout(); the filter above
-         keeps only what this page load produced (in practice: page_view, which
-         analytics.js fires before this file runs). */
+      /* install() replays this device's still-undelivered record into
+         fanout() and marks it delivered, once and for all page loads. */
       TYJC.analytics.install(fanout);
     } else {
-      TYJC.analytics.all().forEach(fanout);
+      /* A sink registered after install() — GA4 right after an Accept click.
+         The mark has already moved past the history, so nothing would reach
+         this sink until the next live event; give it this page load's events,
+         which is the most a consent-gated provider may ever be back-filled
+         with (in practice the page_view analytics.js fires before this file
+         runs). */
+      ((TYJC.analytics && TYJC.analytics.events) || []).forEach(function (event) {
+        deliver(entry, event);
+      });
     }
   }
 
@@ -276,9 +305,11 @@
       send_page_view: !hasContract()
     });
 
+    /* pageLoadOnly: §5/§9 — nothing recorded before the visitor accepted goes
+       to Google, in any sink-registration order. */
     addSink(function (event) {
       window.gtag('event', event.name, cleanProps(event.props));
-    });
+    }, true);
   }
 
   /* Withdrawal (§7: "withdraw your cookie consent ... same result, faster").

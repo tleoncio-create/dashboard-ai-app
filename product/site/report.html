@@ -76,6 +76,11 @@
 
   <div id="sample-banner" class="banner banner--sample" hidden>SAMPLE DATA — invented figures for testing the panel. Nothing here is a real result, and nothing is written to storage.</div>
   <div id="size-banner" class="banner banner--warn"></div>
+  <!-- OBS-1: malformed entries in the store are dropped at read time instead
+       of throwing halfway through render(). They are counted here, because a
+       silently skipped event is an event neither the funnel nor the privacy
+       self-check below has looked at. -->
+  <div id="skipped-banner" class="banner banner--bad" hidden></div>
 
   <h2>The six rows</h2>
   <div class="scroll">
@@ -171,8 +176,55 @@
 
   var state = { source: 'local', traffic: 'all' };
 
+  /* ------------------------------------------------------------------ *
+   * Reading the store (OBS-1)
+   *
+   * Everything below assumes event.name, event.ts and event.props are there.
+   * One malformed entry — hand-edited storage, a half-written record, an
+   * event from a future version — used to throw inside render() and take the
+   * funnel AND the privacy self-check down with it, leaving a page that looks
+   * finished with a whole section missing. So the shape is checked once, at
+   * the read, and anything that fails is counted and set aside.
+   * ------------------------------------------------------------------ */
+  var skipped = 0;
+
+  function readable(event) {
+    if (!event || typeof event !== 'object') return false;
+    if (typeof event.name !== 'string' || !event.name) return false;
+    if (typeof event.ts !== 'string' || !event.ts) return false;
+    var props = event.props;
+    if (!props || typeof props !== 'object') return false;
+    if (Object.prototype.toString.call(props) === '[object Array]') return false;
+    return true;
+  }
+
   function allEvents() {
-    return state.source === 'sample' ? sampleEvents() : TYJC.analytics.all();
+    var raw = state.source === 'sample' ? sampleEvents() : TYJC.analytics.all();
+    if (Object.prototype.toString.call(raw) !== '[object Array]') raw = [];
+    var good = [];
+    skipped = 0;
+    raw.forEach(function (event) {
+      if (readable(event)) good.push(event);
+      else skipped++;
+    });
+    return good;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Volume labels (OBS-2). "1 buyers" and "1 cards / 1 starts" read like a
+   * broken template, which is the last thing a panel arguing about sample
+   * size should look like. Units are written "singular|plural"; a unit with
+   * no "|" reads the same for any count ("chose a track").
+   * ------------------------------------------------------------------ */
+  function unit(spec, n) {
+    var forms = String(spec).split('|');
+    return n === 1 ? forms[0] : (forms[1] || forms[0]);
+  }
+
+  /* One thousands separator everywhere, so "1,000 visits" in the threshold
+     copy and the count next to it are written the same way. */
+  function fmt(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   function inTraffic(event) {
@@ -195,7 +247,8 @@
     if (den === null) return '<span class="pct">—</span><span class="vol">no data source yet</span>';
     var over = num > den ? ' <span class="tag tag--thin">over 100%</span>' : '';
     return '<span class="pct">' + pct(num, den) + '</span>' + over +
-      '<span class="vol">' + num + ' ' + unitNum + ' / ' + den + ' ' + unitDen + '</span>';
+      '<span class="vol">' + fmt(num) + ' ' + unit(unitNum, num) +
+      ' / ' + fmt(den) + ' ' + unit(unitDen, den) + '</span>';
   }
 
   function status(num, den, target, minDen) {
@@ -240,7 +293,7 @@
         signal: '% who finish the builder — cards generated / builders started',
         note: 'One buyer can generate a second card by picking another test, so this can pass 100% on a small sample. Unique visitors from the provider are what fix it, not a cap here.',
         target: '≥ 70%',
-        html: cell(cards, starts, 'cards', 'starts'),
+        html: cell(cards, starts, 'card|cards', 'start|starts'),
         status: status(cards, starts, 0.7, 30)
       },
       {
@@ -255,7 +308,7 @@
         signal: '% joining the waiting list (of people who got a card)',
         target: '≥ 40%',
         html: waitlist || state.source === 'sample'
-          ? cell(waitlist, cards, 'joined', 'cards')
+          ? cell(waitlist, cards, 'joined', 'card|cards')
           : '<span class="pct">—</span><span class="vol">RG-10 not built: needs a <code>waitlist_joined</code> event</span>',
         status: waitlist || state.source === 'sample' ? status(waitlist, cards, 0.4, 30) : '<span class="tag tag--none">waiting on RG-10</span>'
       },
@@ -270,7 +323,7 @@
         id: 'H0', hypothesis: 'Somebody pays for this',
         signal: 'visit → purchase conversion (sales page views)',
         target: '≥ 1.5%',
-        html: cell(purchases, sales, 'purchases', 'sales-page views'),
+        html: cell(purchases, sales, 'purchase|purchases', 'sales-page view|sales-page views'),
         status: status(purchases, sales, 0.015, 1000)
       }
     ];
@@ -298,11 +351,30 @@
     var sizeBanner = document.getElementById('size-banner');
     if (buyers >= 30 || visits >= 1000) {
       sizeBanner.className = 'banner';
-      sizeBanner.innerHTML = '<strong>Sample is readable.</strong> ' + buyers + ' buyers, ' + visits + ' qualified visits.';
+      sizeBanner.innerHTML = '<strong>Sample is readable.</strong> ' + fmt(buyers) + ' ' +
+        unit('buyer|buyers', buyers) + ', ' + fmt(visits) + ' qualified ' + unit('visit|visits', visits) + '.';
     } else {
       sizeBanner.className = 'banner banner--warn';
-      sizeBanner.innerHTML = '<strong>Below the reading threshold.</strong> ' + buyers +
-        ' buyers and ' + visits + ' sales-page visits — personas.md sets ≥ 30 buyers or ≥ 1,000 visits before these percentages mean anything. Until then they are anecdote, and should be reported to the PM as such.';
+      sizeBanner.innerHTML = '<strong>Below the reading threshold.</strong> ' + fmt(buyers) + ' ' +
+        unit('buyer|buyers', buyers) + ' and ' + fmt(visits) + ' sales-page ' + unit('visit|visits', visits) +
+        ' — personas.md sets ≥ 30 buyers or ≥ 1,000 visits before these percentages mean anything. Until then they are anecdote, and should be reported to the PM as such.';
+    }
+
+    /* OBS-1: say how many entries were unreadable, and say what that costs —
+       they are outside every number on this page, including the privacy
+       self-check at the bottom. */
+    var skippedBanner = document.getElementById('skipped-banner');
+    if (skipped) {
+      skippedBanner.hidden = false;
+      skippedBanner.innerHTML = '<strong>' + fmt(skipped) + ' malformed ' +
+        unit('event|events', skipped) + ' ignored.</strong> ' +
+        (skipped === 1 ? 'An entry in the store was' : 'Entries in the store were') +
+        ' missing a name, a timestamp or a properties object, so ' +
+        (skipped === 1 ? 'it is' : 'they are') +
+        ' outside every count on this page — including the privacy self-check. Inspect the raw store with <code>TYJC.analytics.all()</code>, then clear this device.';
+    } else {
+      skippedBanner.hidden = true;
+      skippedBanner.innerHTML = '';
     }
 
     document.getElementById('panel').innerHTML = rows(events).map(function (r) {
@@ -315,8 +387,8 @@
     document.getElementById('funnel').innerHTML = TYJC.FUNNEL_ORDER.map(function (name) {
       var a = count(all, name), paid = count(all.filter(function (e) { return e.props.traffic === 'paid'; }), name);
       var org = count(all.filter(function (e) { return e.props.traffic === 'organic'; }), name);
-      return '<tr><td><code>' + name + '</code></td><td class="num">' + a + '</td><td class="num">' + paid +
-        '</td><td class="num">' + org + '</td><td>' + OWNERS[name] + '</td></tr>';
+      return '<tr><td><code>' + name + '</code></td><td class="num">' + fmt(a) + '</td><td class="num">' + fmt(paid) +
+        '</td><td class="num">' + fmt(org) + '</td><td>' + OWNERS[name] + '</td></tr>';
     }).join('');
 
     /* order check: first occurrence of each contract event must not go backwards */
