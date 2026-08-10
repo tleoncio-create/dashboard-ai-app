@@ -52,6 +52,7 @@
   .foot { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--soft); font-size: 0.8125rem; }
   code { background: #eef1f3; padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
 </style>
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 <main class="wrap">
@@ -112,10 +113,20 @@
 
   <p class="foot">Definitions are in the page source, next to each row. Event contract: <code>analytics.js</code>. Panel source: <code>personas.md</code>, "Painel de validação".</p>
 
+  <!-- DT-02: the same footer control as the public pages, so the cookie choice
+       can be inspected and changed from here too. The panel itself never loads
+       a provider — see the TYJC_NO_PAGE_VIEW note in consent.js. -->
+  <p class="foot"><button type="button" data-tyjc-consent="open">Cookie settings</button></p>
+
 </main>
 
 <script>window.TYJC_NO_PAGE_VIEW = true;</script>
+<script src="analytics-config.js"></script>
 <script src="analytics.js"></script>
+<!-- DT-01/DT-02: banner and "Cookie settings" only. TYJC_NO_PAGE_VIEW also
+     tells consent.js this is the internal panel, so no provider script is
+     injected here and the team's own visits stay out of the dashboards. -->
+<script src="consent.js"></script>
 <script>
 (function () {
   'use strict';

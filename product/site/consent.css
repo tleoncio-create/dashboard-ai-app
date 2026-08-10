@@ -1,0 +1,140 @@
+/* TYJC — cookie banner and "Cookie settings" control (DT-01 / DT-02).
+
+   One shared file because the banner appears on four different stylesheets:
+   site.css (sales), builder.css + card.css (builder), legal/legal.css (the
+   three legal pages, which also have a dark mode) and report.html's inline
+   panel styles. Duplicating it into each would be four copies to keep in sync.
+
+   It carries no palette of its own: every colour reads the host page's tokens
+   with a fallback chain, so the banner is light on the sales page and dark on
+   a legal page viewed in dark mode without a single media query here. The
+   fallback literals are site.css's values, used only if a page defines nothing.
+
+   Mobile first, designed at 375px like the rest of the site. */
+
+.cc {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: var(--card, var(--bg, #ffffff));
+  color: var(--ink, #14171a);
+  border-top: 1px solid var(--line, var(--rule, #dfe3e8));
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.cc[hidden] { display: none; }
+
+.cc:focus { outline: none; }
+
+.cc__inner {
+  position: relative;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 14px 40px 16px 16px;
+}
+
+.cc__title {
+  margin: 0 0 6px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.cc__text {
+  margin: 0;
+  color: var(--ink-soft, var(--soft, #4b545c));
+}
+
+.cc__link { color: var(--accent, #14504b); }
+
+.cc__current {
+  margin: 8px 0 0;
+  font-weight: 700;
+  color: var(--ink, #14171a);
+}
+
+.cc__current[hidden] { display: none; }
+
+/* Accept and Decline are deliberately identical: same size, same border, same
+   weight, same colour. Neither is the "obvious" one — Privacy Policy §9 says
+   withdrawing is exactly as easy as accepting, and that has to be visible. */
+.cc__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cc__btn {
+  flex: 1 1 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent, #14504b);
+  border-radius: var(--radius, 10px);
+  background: transparent;
+  color: var(--accent, #14504b);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cc__btn:hover { background: var(--accent-soft, var(--bg-soft, transparent)); }
+
+.cc__btn:focus-visible {
+  outline: 2px solid var(--accent, #14504b);
+  outline-offset: 2px;
+}
+
+.cc__dismiss {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft, var(--soft, #4b545c));
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cc__dismiss:focus-visible {
+  outline: 2px solid var(--accent, #14504b);
+  outline-offset: 2px;
+}
+
+/* Room to scroll past the footer while the banner is up, so it never buries
+   the legal links underneath it. Removed the moment the banner closes. */
+.cc-open body { padding-bottom: 13rem; }
+
+/* DT-02 — the footer control. Styled as a link because that is what it sits
+   among, but it is a button, because it opens something instead of going
+   somewhere. Hidden until consent.js marks the document ready: with
+   JavaScript off nothing loads and nothing is stored either way, so an inert
+   control would be worse than none. */
+[data-tyjc-consent="open"] { display: none; }
+
+.cc-ready [data-tyjc-consent="open"] {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent, #14504b);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (min-width: 40rem) {
+  .cc__inner { padding: 16px 48px 18px 24px; }
+  .cc__actions { justify-content: flex-start; }
+  .cc__btn { flex: 0 0 auto; min-width: 9rem; }
+  .cc-open body { padding-bottom: 9rem; }
+}

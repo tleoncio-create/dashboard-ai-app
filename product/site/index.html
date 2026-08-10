@@ -24,6 +24,7 @@
 <meta name="description" content="Turn the growth decision you're stuck on into one cheap experiment — with a spending cap, a deadline, a target number and the point where you stop. $19 launch price, full refund within 7 days.">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 <main class="wrap">
@@ -281,6 +282,11 @@
       <a href="legal/privacy.html">Privacy Policy</a>
       <a href="legal/refunds.html">Refund Policy</a>
       <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+      <!-- DT-02: reopens the cookie banner. Privacy Policy §9 promises
+           withdrawing is exactly as easy as accepting. consent.js reveals it;
+           with JavaScript off it stays hidden, because with JavaScript off
+           nothing is loaded or stored to withdraw. -->
+      <button type="button" data-tyjc-consent="open">Cookie settings</button>
     </nav>
     <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
     <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
@@ -291,6 +297,11 @@
 <!-- Analytics seam only. RG-07 owns page_view (site-wide) and RG-02 owns
      checkout_start on the data-cta="buy" buttons — this page deliberately emits
      neither, so nothing double-fires when those stories land. -->
+<script src="analytics-config.js"></script>
 <script src="analytics.js"></script>
+<!-- DT-01: the consent gate. Nothing third-party is requested by any of the
+     three files above until consent.js decides it may be — Plausible because
+     it needs no cookie, GA4 only after an explicit Accept (Privacy Policy §9). -->
+<script src="consent.js"></script>
 </body>
 </html>

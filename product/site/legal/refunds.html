@@ -10,6 +10,7 @@
 <meta name="description" content="Full refund within 7 days of purchase, no questions asked. Here's how to ask.">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="legal.css">
+<link rel="stylesheet" href="../consent.css">
 </head>
 <body>
 <div class="wrap">
@@ -86,11 +87,24 @@
     <a href="privacy.html">Privacy Policy</a>
     <a href="refunds.html">Refund Policy</a>
     <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+    <!-- DT-02: reopens the cookie banner, so withdrawing consent is exactly as
+         easy as giving it (§9). Hidden while JavaScript is off, because then
+         nothing has been loaded or stored to withdraw. -->
+    <button type="button" data-tyjc-consent="open">Cookie settings</button>
   </nav>
   <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
   <p>Full refund within 7 days, no questions asked. <a href="refunds.html">How it works</a>.</p>
 </footer>
 
 </div>
+
+<!-- DT-01: the cookie banner and the consent gate promised by §9 of the Privacy
+     Policy. These two files load no third party by themselves: analytics-config.js
+     is values only, and consent.js requests Plausible (no cookie, no consent
+     needed) or Google Analytics (only after an explicit Accept). The event
+     contract in analytics.js is not loaded here — the legal pages emit no funnel
+     events, and the providers count the visit on their own. -->
+<script src="../analytics-config.js"></script>
+<script src="../consent.js"></script>
 </body>
 </html>

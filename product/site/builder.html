@@ -7,6 +7,7 @@
 <title>Experiment Builder — Test Your Jump Cheaply</title>
 <link rel="stylesheet" href="builder.css">
 <link rel="stylesheet" href="card.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 <main class="wrap">
@@ -57,6 +58,8 @@
       <a href="legal/privacy.html">Privacy Policy</a>
       <a href="legal/refunds.html">Refund Policy</a>
       <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+      <!-- DT-02: reopens the cookie banner (Privacy Policy §9). -->
+      <button type="button" data-tyjc-consent="open">Cookie settings</button>
     </nav>
     <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
     <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
@@ -64,7 +67,10 @@
 
 </main>
 
+<script src="analytics-config.js"></script>
 <script src="analytics.js"></script>
+<!-- DT-01: consent gate — see index.html and Privacy Policy §9. -->
+<script src="consent.js"></script>
 <script src="experiments.js"></script>
 <script src="recommend.js"></script>
 <script src="builder.js"></script>
