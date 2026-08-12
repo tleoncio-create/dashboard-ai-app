@@ -17,6 +17,17 @@
   var TYJC = (window.TYJC = window.TYJC || {});
   var CARD_KEY = 'tyjc.card.v1';
 
+  /* RG-06. Deliberately NOT inside CARD_KEY: "Start over" wipes the card's
+     memory (see TYJC.onReset at the bottom of this file), and it must not
+     re-arm the email_captured event. The address was captured on the server the
+     first time; a second card from the same person is not a second capture. */
+  var EMAIL_KEY = 'tyjc.email.v1';
+
+  /* Vercel serves the function at /api/send-card. Overridable so the site can
+     be opened from a subdirectory, or from file:// against a local server,
+     without editing this file. */
+  var SEND_CARD_URL = window.TYJC_SEND_CARD_URL || '/api/send-card';
+
   /* ------------------------------------------------------------------ *
    * Reading rules, one per experiment.
    *
@@ -498,6 +509,213 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * "Email me the card" (RG-06 / US-06)
+   *
+   * THE CARD IS ALREADY ON SCREEN WHEN THIS RENDERS. That is the whole design
+   * constraint (US-06 AC7 / Privacy Policy §2.3): the email is an extra copy of
+   * something already delivered, never a gate on it. So this block sits BELOW
+   * the finished card, the page works with it ignored, and every failure path
+   * says out loud that the card is still there.
+   *
+   * Two separate things are asked for, and they must not be confused:
+   *   1. the address to send this card to — that is the whole request;
+   *   2. consent to occasional emails later — a SEPARATE, UNTICKED box.
+   *      Privacy Policy §2 promises exactly that: "only if you explicitly
+   *      consented by ticking the box. It's a separate, unticked choice, and it
+   *      is never a condition of getting what you paid for." Pre-ticking it, or
+   *      making the send depend on it, would make published copy a lie.
+   *
+   * US-07 AC5: the address NEVER enters an analytics payload. sanitize() in
+   * analytics.js would drop it, but that is a net, not a plan — the event below
+   * is built from the track alone and the address is not in scope where it is
+   * constructed.
+   * ------------------------------------------------------------------ */
+  function readEmailMeta() {
+    try {
+      var raw = window.localStorage.getItem(EMAIL_KEY);
+      var value = raw ? JSON.parse(raw) : null;
+      if (value && typeof value === 'object') return { captured: !!value.captured };
+    } catch (err) {
+      /* storage blocked — the guard degrades to "once per page load", which is
+         the safe direction: it can only lose an event, never invent one */
+    }
+    return { captured: false };
+  }
+
+  function emitEmailCaptured(state) {
+    if (emitEmailCaptured.done) return;  // this page load
+    var meta = readEmailMeta();
+    if (meta.captured) return;           // this device, any earlier visit
+    emitEmailCaptured.done = true;
+    try {
+      window.localStorage.setItem(EMAIL_KEY, JSON.stringify({ captured: true }));
+    } catch (err) {
+      /* see readEmailMeta */
+    }
+    /* Track only. No address, no card text, no experiment id. */
+    TYJC.track(TYJC.EVENTS.EMAIL_CAPTURED, { track: state.track });
+  }
+
+  /* The browser-side check. Same shape as the one in api/send-card.js, and for
+     the same reason it is not the last word: this one saves a round trip and
+     gives an instant answer, the server's is the rule. */
+  var EMAIL_RE = /^[^\s@,;:<>"'\\]+@[^\s@,;:<>"'\\]+\.[^\s@,;:<>"'\\]{2,}$/;
+
+  function renderEmailForm(state, into) {
+    var box = el('section', 'send-card');
+
+    box.appendChild(el('h3', 'send-card__title', 'Email me the card'));
+    box.appendChild(
+      el(
+        'p',
+        'send-card__lead',
+        'Optional. The card above is yours either way — this just puts a copy in ' +
+          'your inbox so you still have it on Monday when the tab is long gone.'
+      )
+    );
+
+    var label = el('label', 'send-card__label', 'Your email address');
+    label.setAttribute('for', 'tyjc-email');
+    box.appendChild(label);
+
+    var field = document.createElement('input');
+    field.type = 'email';
+    field.className = 'field';
+    field.id = 'tyjc-email';
+    field.name = 'email';
+    field.autocomplete = 'email';
+    field.setAttribute('inputmode', 'email');
+    field.setAttribute('placeholder', 'you@yourbusiness.com');
+    box.appendChild(field);
+
+    /* UNTICKED, and it stays unticked. Privacy Policy §2.3. */
+    var optWrap = el('label', 'send-card__opt');
+    var opt = document.createElement('input');
+    opt.type = 'checkbox';
+    opt.id = 'tyjc-email-opt';
+    opt.checked = false;
+    optWrap.setAttribute('for', 'tyjc-email-opt');
+    optWrap.appendChild(opt);
+    optWrap.appendChild(
+      el(
+        'span',
+        null,
+        'Also send me occasional emails about the method and new experiments. ' +
+          'Separate from the card — leave this alone and you still get the card, ' +
+          'and nothing else follows.'
+      )
+    );
+    box.appendChild(optWrap);
+
+    var status = el('p', 'send-card__status');
+    status.setAttribute('role', 'status');
+    status.hidden = true;
+    box.appendChild(status);
+
+    var error = el('p', 'send-card__error');
+    error.setAttribute('role', 'alert');
+    error.hidden = true;
+    box.appendChild(error);
+
+    var send = el('button', 'btn btn--primary', 'Send it to me');
+    send.type = 'button';
+
+    function show(node, message) {
+      status.hidden = true;
+      error.hidden = true;
+      node.textContent = message;
+      node.hidden = false;
+    }
+
+    function busy(on) {
+      send.disabled = on;
+      send.textContent = on ? 'Sending…' : 'Send it to me';
+    }
+
+    send.addEventListener('click', function () {
+      var address = field.value.trim();
+      if (!EMAIL_RE.test(address) || address.length > 254) {
+        show(error, "That doesn't look like an email address. Check it and try again — your card is still on screen.");
+        field.focus();
+        return;
+      }
+
+      var text = TYJC.getCardText();
+      if (!text) {
+        show(error, 'There is no finished card to send yet.');
+        return;
+      }
+
+      busy(true);
+      var payload = {
+        email: address,
+        cardText: text,
+        consent: opt.checked === true,
+        track: state.track
+      };
+
+      var done = function (ok, message) {
+        busy(false);
+        if (ok) {
+          show(status, message);
+          field.disabled = true;
+          opt.disabled = true;
+          send.disabled = true;
+          send.textContent = 'Sent';
+          /* Only on a real success. A failed send captured nothing, and the
+             funnel must not say otherwise. */
+          emitEmailCaptured(state);
+        } else {
+          show(error, message);
+        }
+      };
+
+      var FAILED = "We couldn't send that email just now. Your card is still on screen — copy or print it, and try again in a minute.";
+
+      window
+        .fetch(SEND_CARD_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(function (response) {
+          return response
+            .json()
+            .catch(function () {
+              return {};
+            })
+            .then(function (data) {
+              if (response.ok && data && data.ok) {
+                done(true, 'Sent. Check your inbox — and the spam folder, just in case. It usually lands within a minute.');
+                return;
+              }
+              /* The server writes its own English; it is the side that knows
+                 what went wrong. Fall back only if it said nothing. */
+              done(false, (data && data.error) || FAILED);
+            });
+        })
+        .catch(function () {
+          /* Offline, blocked, or no function deployed at that path. */
+          done(false, FAILED);
+        });
+    });
+
+    box.appendChild(send);
+
+    box.appendChild(
+      el(
+        'p',
+        'send-card__fine',
+        'We use your address to send this card, and for the occasional emails ' +
+          'only if you ticked the box above. We never sell it. What we keep and ' +
+          'how to have it deleted is in the privacy policy.'
+      )
+    );
+
+    into.appendChild(box);
+  }
+
+  /* ------------------------------------------------------------------ *
    * Spec §5 — question 7 came back without a digit, so there is no target to
    * kill the test with. Ask for it here, in the card layer, and generate
    * nothing until it is confirmed. The builder is untouched (RG-03 frozen).
@@ -618,6 +836,9 @@
         'This card is saved in this browser, on this device. Print it, copy it, or come back to it here.'
       )
     );
+
+    /* RG-06, below the finished card on purpose — see renderEmailForm. */
+    renderEmailForm(state, mount);
 
     markPrintPath(article);
     emitCardGenerated(state);

@@ -339,7 +339,10 @@
     builder_start: 'RG-03 · live',
     builder_step_completed: 'RG-03 · live',
     card_generated: 'RG-04 · live',
-    email_captured: 'RG-06 · blocked by PF-03'
+    /* RG-06 is built. The endpoint answers 503 until the founder puts
+       RESEND_API_KEY into the Vercel environment (PF-11); nothing is emitted
+       on a failed send, so this row stays at zero until it can be true. */
+    email_captured: 'RG-06 · built, waiting on PF-11'
   };
 
   function render() {

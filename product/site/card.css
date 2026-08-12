@@ -155,10 +155,90 @@
   color: var(--ink-soft);
 }
 
+/* ------------------------------------------------------------------ *
+ * "Email me the card" (RG-06 / US-06)
+ *
+ * Sits below the finished card, and looks like it: same panel as .target-ask,
+ * but with the neutral border, because this one is optional and the card is
+ * already delivered. Nothing here is styled to be the obvious next action.
+ * It disappears in print automatically — the .tyjc-print-path rule below
+ * hides every child of the mount that is not the card itself.
+ * ------------------------------------------------------------------ */
+.send-card {
+  display: block;
+  margin-top: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.send-card__title { margin: 0 0 6px; font-size: 1.0625rem; }
+
+.send-card__lead {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.send-card__label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+/* The consent row. 44px of tappable height at 375px, and the box is never
+   pre-ticked — Privacy Policy §2.3, enforced in card.js. */
+.send-card__opt {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 4px;
+  padding: 10px 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.send-card__opt input {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.send-card__status,
+.send-card__error {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+}
+
+.send-card__status { background: var(--accent-soft); color: var(--accent); }
+.send-card__error { background: var(--warn-soft); color: var(--warn); }
+
+.send-card .btn {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+}
+
+.send-card .btn:disabled { opacity: 0.65; cursor: default; }
+
+.send-card__fine {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
 @media (min-width: 40rem) {
   .card { padding: 24px; }
   .card__title { font-size: 1.5rem; }
   .card-actions .btn { flex: 0 0 auto; }
+  .send-card .btn { width: auto; min-width: 14rem; }
 }
 
 /* ------------------------------------------------------------------ *
