@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Experiment Builder — Test Your Jump Cheaply</title>
+<link rel="stylesheet" href="builder.css">
+<link rel="stylesheet" href="card.css">
+<!-- RG-10: the post-purchase block card.js appends under the finished card. -->
+<link rel="stylesheet" href="nextstep.css">
+<link rel="stylesheet" href="consent.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header class="brand">
+    <p class="brand__kicker">Test Your Jump Cheaply</p>
+    <h1 class="brand__title">Experiment Builder</h1>
+    <p class="brand__lead">Eight questions. At the end you pick one cheap test to run yourself — with a spending cap, a deadline and a number that tells you when to stop.</p>
+  </header>
+
+  <p class="notice" id="restored" hidden>
+    We brought back the answers you left on this device. Pick up where you stopped, or
+    <button type="button" class="linkish js-reset">start over</button>.
+  </p>
+
+  <nav class="steps" id="steps" aria-label="Questions"></nav>
+
+  <div class="meta">
+    <p class="meta__progress" id="progress">Question 1 of 8</p>
+    <p class="meta__track" id="track-tag" hidden></p>
+  </div>
+
+  <div class="bar" id="bar-outer" role="progressbar" aria-label="Progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+    <div class="bar__fill" id="bar"></div>
+  </div>
+
+  <form class="builder" id="builder" novalidate>
+    <div class="question" id="question"></div>
+    <p class="error" id="error" role="alert" hidden></p>
+    <div class="nav">
+      <button type="button" class="btn btn--ghost" id="back" hidden>Back</button>
+      <button type="submit" class="btn btn--primary" id="next">Next</button>
+    </div>
+  </form>
+
+  <footer class="foot">
+    <p>Your answers stay in this browser, on this device. Nothing is sent anywhere.</p>
+    <p><button type="button" class="linkish js-reset">Start over</button></p>
+
+    <!-- Legal footer — handoff from squad-conteudo, legal/_footer-snippet.html (RG-08).
+         Copy kept verbatim. Hrefs use the "page at site root" prefix documented in the
+         snippet. Home is included now that RG-01 published index.html.
+         contact@lessriskmoregrowth.com is RG-08's token, tracked under PF-02 (domain not
+         registered yet). -->
+    <nav class="foot__legal" aria-label="Legal">
+      <a href="index.html">Home</a>
+      <a href="legal/terms.html">Terms of Service</a>
+      <a href="legal/privacy.html">Privacy Policy</a>
+      <a href="legal/refunds.html">Refund Policy</a>
+      <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+      <!-- DT-02: reopens the cookie banner (Privacy Policy §9). -->
+      <button type="button" data-tyjc-consent="open">Cookie settings</button>
+    </nav>
+    <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+    <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
+  </footer>
+
+</main>
+
+<script src="analytics-config.js"></script>
+<script src="analytics.js"></script>
+<!-- DT-01: consent gate — see index.html and Privacy Policy §9. -->
+<script src="consent.js"></script>
+<script src="experiments.js"></script>
+<script src="recommend.js"></script>
+<script src="builder.js"></script>
+<!-- RG-10 before RG-04: card.js calls TYJC.nextStep.render() as the last thing
+     it appends under a finished card, so the module has to exist by then. It
+     self-mounts nothing here — there is no #tyjc-nextstep on this page. -->
+<script src="nextstep.js"></script>
+<script src="card.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!-- ============================================================
+     TYJC — shared legal footer
+     Handoff from squad-conteudo (RG-08) to squad-produto (RG-01, RG-03, RG-04).
+
+     US-08 acceptance criterion 1 requires Terms, Privacy and Refund Policy to
+     be reachable from the footer of EVERY page. Paste this block at the end of
+     <body> on the sales page, the builder, the card screen and the post-purchase
+     screen. It is plain semantic HTML with no dependency on legal.css — style it
+     with the site stylesheet however you like.
+
+     Adjust the href prefix to your page depth:
+       pages at site root      -> legal/terms.html
+       pages inside /legal/    -> terms.html   (already the case in this folder)
+
+     DT-02 (squad-produto): the "Cookie settings" control below is not optional
+     decoration — Privacy Policy §9 promises a footer link that reopens the
+     cookie banner, and that withdrawing consent is exactly as easy as giving
+     it. Any page that pastes this block must also load consent.js (and
+     analytics-config.js before it, and consent.css in the head), or the
+     control will never appear: consent.css keeps it hidden until consent.js
+     marks the document ready, so a page that forgets the script shows nothing
+     rather than a dead button.
+
+     PF-02 (open founder pendency): the domain is not registered yet, so the
+     support address is still a token. Once PF-02 closes:
+       (1) replace every occurrence of contact@lessriskmoregrowth.com across this folder
+           and any page that pasted this snippet — including the mailto: href
+           below, which stays invalid until then;
+       (2) delete the `.tbd` rule from legal.css. That single deletion
+           neutralises all 5 <span class="tbd"> markers at once (1 in
+           terms.html, 2 in privacy.html, 2 in refunds.html); the spans
+           themselves can then be unwrapped at leisure with no visual artefact.
+     This is a tracked external dependency, NOT unfinished copy.
+
+     PF-01 RESOLVED (D2): Lemon Squeezy account created by the founder; it is the
+     confirmed Merchant of Record (DF-03). The payment-processor line below is
+     settled — no longer provisional in this file or in the pages that pasted it.
+     ============================================================ -->
+
+<footer class="site-footer">
+  <nav aria-label="Legal">
+    <a href="/">Home</a>
+    <a href="/legal/terms.html">Terms of Service</a>
+    <a href="/legal/privacy.html">Privacy Policy</a>
+    <a href="/legal/refunds.html">Refund Policy</a>
+    <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+    <button type="button" data-tyjc-consent="open">Cookie settings</button>
+  </nav>
+  <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+  <p>Full refund within 7 days, no questions asked. <a href="/legal/refunds.html">How it works</a>.</p>
+</footer>

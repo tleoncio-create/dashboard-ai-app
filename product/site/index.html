@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<!-- ==========================================================================
+     TYJC sales page — RG-01 / US-01. Copy owned by squad-conteudo.
+     This entire page goes into the founder's copy approval package on D3.
+
+     PF-01 RESOLVED (D2): Lemon Squeezy account created; it is the confirmed
+     Merchant of Record (DF-03), so the payment-processor mentions in this file
+     are settled.
+
+     PENDING PF-08: the checkout URL itself does not exist yet — an account is
+     not a buy link. It needs a store, a product priced per DF-02 ($29, with $19
+     for the first 100), and the store activated for live payments.
+
+     RG-02 IS BUILT AND WAITING ON THAT ONE VALUE. Nothing in this file changes
+     when the URL arrives: the three purchase buttons keep data-cta="buy" and
+     href="#checkout" as their no-JavaScript fallback, and checkout.js rewrites
+     the href at page load. Going live is TWO LINES IN checkout-config.js
+     (enabled: true, checkoutUrl: '...'), and taking it back down is the same
+     edit in reverse. Until then a click on any of the three scrolls to
+     #checkout and says sales have not opened yet — never a dead button.
+
+     PENDING PF-02: contact@lessriskmoregrowth.com in the footer is RG-08's token (domain
+     not registered yet). Replace it together with the copies in legal/.
+     ========================================================================== -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Your Jump Cheaply — walk out with one cheap experiment, ready to run</title>
+<meta name="description" content="Turn the growth decision you're stuck on into one cheap experiment — with a spending cap, a deadline, a target number and the point where you stop. $19 launch price, full refund within 7 days.">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="consent.css">
+</head>
+<body>
+<main class="wrap">
+
+  <!-- ============================ hero ============================ -->
+  <header class="hero">
+    <p class="kicker">Test Your Jump Cheaply</p>
+    <h1 class="hero__title">Walk out with one cheap experiment, ready to run.</h1>
+    <p class="hero__tag">About to jump? Test the jump first.</p>
+    <p class="hero__lead">
+      Stop betting your money on guesses. Answer eight questions about the decision
+      you're stuck on and get back a single page: one test, a spending cap you set,
+      a start date, a read date, the number that counts as a yes — and the number
+      where you stop.
+    </p>
+
+    <!-- DF-07: the brand mark is written "- Risk + Growth", minus sign included.
+         It reads as "less risk, more growth" and replaces that phrase as the
+         brand tagline wherever the brand is named. Do not drop the leading "-". -->
+    <p class="brandline">- Risk + Growth</p>
+
+    <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
+    <a class="btn btn--primary" href="#checkout" data-cta="buy">
+      Get it now <span class="btn__price">— $19</span>
+    </a>
+
+    <p class="hero__note">
+      $19 launch price for the first 100 buyers, $29 after that. One payment, no
+      subscription. <b>Full refund within 7 days, no questions asked.</b>
+    </p>
+  </header>
+
+  <!-- ============================ the problem ============================ -->
+  <section>
+    <h2>You're not short on ideas. You're short on a way to kill the bad ones cheaply.</h2>
+    <p class="quote">
+      "I try more posts, a new ad, a different price — all at once. Sales move, and
+      I still can't tell you which one did it."
+    </p>
+    <p class="lead">
+      Growing on instinct works right up until it doesn't. The problem isn't effort.
+      It's that nothing you try is set up to teach you anything: no number written
+      down before you start, no end date, no point at which you're allowed to stop.
+      So every month costs money and produces opinions.
+    </p>
+    <p class="lead">
+      A test fixes that — but only if it's small enough to afford, short enough to
+      finish, and specific enough to fail. That's the whole job of this tool.
+    </p>
+  </section>
+
+  <!-- ============================ what you get ============================ -->
+  <section>
+    <h2>What you get: one Experiment Card</h2>
+    <p class="lead">
+      One page, eight fields, filled in from your answers. Copy it, print it, or have
+      it emailed to you.
+    </p>
+
+    <ol class="fields">
+      <li><b>The bet</b> — <span>the decision you're about to make with real money.</span></li>
+      <li><b>The hypothesis</b> — <span>what you believe, written so it can turn out to be wrong.</span></li>
+      <li><b>The smallest test</b> — <span>the concrete thing you run, step by step.</span></li>
+      <li><b>Budget cap</b> — <span>the most you can lose on it, as a number.</span></li>
+      <li><b>Timebox</b> — <span>the date you start and the date you read the result.</span></li>
+      <li><b>Success metric + threshold</b> — <span>what you count, and the number that counts as a yes.</span></li>
+      <li><b>Kill criteria</b> — <span>the number below which you stop and don't extend the budget.</span></li>
+      <li><b>If it works / if it doesn't</b> — <span>your next move in either case, decided in advance.</span></li>
+    </ol>
+
+    <!-- Worked example. INTEGRITY NOTE (US-01 AC8): this is an invented
+         illustration, labelled as such on the page. It is not a customer, not a
+         case study and not a testimonial. Do not reword the flag below. -->
+    <div class="example">
+      <p class="example__flag">
+        An example we made up, so you can see the shape of the output. It's not a
+        customer story — we're not going to show you results that aren't ours.
+      </p>
+      <p class="example__intro">
+        Say you run a two-person studio building websites for small restaurants, and
+        you're about to spend six weeks packaging a fixed-price audit service. Here's
+        what the card might look like.
+      </p>
+
+      <dl class="card">
+        <dt>1 · The bet</dt>
+        <dd>Spend six weeks building a fixed-price $600 "restaurant website audit" and put it on the site.</dd>
+
+        <dt>2 · The hypothesis</dt>
+        <dd>I believe restaurant owners I've already worked with would pay $600 for a fixed-scope audit — before I build the package.</dd>
+
+        <dt>3 · The smallest test</dt>
+        <dd>The Pre-Sale Page. One page describing exactly what the audit covers, with a real payment button taking a $150 deposit. Email it to the 25 past and current clients I already have addresses for. Nothing gets built until someone pays.</dd>
+
+        <dt>4 · Budget cap</dt>
+        <dd>$75 — page builder and email tool for the month. If it costs more than that, I stop and rethink the test, not the budget.</dd>
+
+        <dt>5 · Timebox</dt>
+        <dd>Starts Monday 17 August 2026 · Read Thursday 27 August 2026</dd>
+
+        <dt>6 · Success metric + threshold</dt>
+        <dd>Paid $150 deposits from the 25 people emailed. At least 3.</dd>
+
+        <dt>7 · Kill criteria</dt>
+        <dd>Fewer than 3 deposits by 27 August → stop, refund every deposit that day, and don't build the package. Do not extend the deadline to "give it more time".</dd>
+
+        <dt>8 · If it works / if it doesn't</dt>
+        <dd><b>If it works:</b> build the audit for the people who already paid, and leave the page up. <b>If it doesn't:</b> I've spent $75 and ten days instead of six weeks — and I go ask the people who didn't buy what they'd have paid for instead.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============================ how it works ============================ -->
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps-list">
+      <li><b>Pay once.</b> No account, no password, nothing to install.</li>
+      <li><b>Answer eight questions.</b> What you sell, the decision you're stuck on, what you believe but haven't proven, how much you can lose without it hurting, and how many days until you need an answer. Set aside about 30 minutes.</li>
+      <li><b>Pick your test.</b> You get two or three experiments from our library that actually fit the budget and the deadline you just typed in — never a list of twenty.</li>
+      <li><b>Walk out with the card.</b> On screen, and in your inbox if you want it there.</li>
+    </ol>
+    <p class="lead">
+      Every experiment in the library costs $500 or less and takes 14 days or less.
+      None of them assume you have an audience, a team, or a budget you don't have.
+    </p>
+    <!-- The builder is currently open so QA can walk the journey end to end.
+         RG-02 built the post-purchase landing as thanks.html, which is where
+         the Lemon Squeezy "redirect after purchase" setting must point (part of
+         PF-08, configured in the LS product, not in this repo). thanks.html is
+         what emits `purchase` and it links on to the builder from there.
+
+         Note for whoever closes the paywall: a static site cannot actually gate
+         the builder — there is no server to check a payment. Today the gate is
+         that nobody is given the link before paying. Real enforcement needs a
+         backend and is out of the frozen MVP scope. -->
+    <p class="lead">
+      The moment you pay you land straight in the
+      <a href="builder.html">Experiment Builder</a> — the same link comes by email,
+      so you can close the tab and finish later on the same device.
+    </p>
+  </section>
+
+  <!-- ============================ the ChatGPT objection ============================ -->
+  <!-- US-01 AC5: this answer must stay at 4 lines or fewer. -->
+  <section>
+    <h2>Why not just ask ChatGPT?</h2>
+    <div class="panel panel--accent">
+      <p>Ask it and you get a plan: twelve things to try, no budget, no order, no stopping point.</p>
+      <p>This gives you one test — with a cap you set, a date you read it, and the number where you quit.</p>
+      <p>A plan is easy to nod at. A commitment is what changes what you actually do on Monday.</p>
+      <p style="margin-bottom:0">The restriction is the product.</p>
+    </div>
+  </section>
+
+  <!-- ============================ who it's for ============================ -->
+  <section>
+    <h2>Which track you'll get</h2>
+    <p class="lead">The first question splits the path, and everything after it changes to match.</p>
+    <div class="tracks">
+      <div class="track">
+        <h3>Getting first traction</h3>
+        <p>You're selling a bit, irregularly, and you can't tell what's working. Your tests are about whether people want it and whether they'll pay — at $0–200, not $2,000.</p>
+      </div>
+      <div class="track">
+        <h3>Scaling what works</h3>
+        <p>The business works and the growth has flattened. You have five competing ideas and one budget. Your tests are about killing four of them cheaply before the quarter is committed.</p>
+      </div>
+    </div>
+
+    <h3>Who this isn't for</h3>
+    <ul class="notfor">
+      <li>People with no business or idea yet — there has to be something to test.</li>
+      <li>People who want it run for them. You get the test designed; you run it. We're not an agency.</li>
+      <li>People who want guaranteed outcomes. We don't sell those, and nobody honest does.</li>
+    </ul>
+  </section>
+
+  <!-- ============================ price + checkout ============================ -->
+  <section id="checkout">
+    <h2>Price</h2>
+    <div class="price">
+      <p class="price__now">$19</p>
+      <p class="price__then">Launch price for the first 100 buyers. $29 after that. One payment — not a subscription, nothing renews.</p>
+
+      <ul class="price__what">
+        <li>The guided eight-question builder</li>
+        <li>Your Experiment Card, on screen and by email</li>
+        <li>The library of eight cheap tests, each $500 or less and 14 days or less</li>
+        <li>As many cards as you need for your own business</li>
+      </ul>
+
+      <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
+      <a class="btn btn--primary" href="#checkout" data-cta="buy">
+        Get it now <span class="btn__price">— $19</span>
+      </a>
+
+      <p class="price__guarantee">
+        <b>Full refund within 7 days, no questions asked.</b><br>
+        Paid in US dollars. Tax, if it applies where you are, is shown before you
+        confirm. Payment is handled by Lemon Squeezy as merchant of record.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ faq ============================ -->
+  <section>
+    <h2>Straight answers</h2>
+    <div class="faq">
+      <details>
+        <summary>What exactly do I walk away with?</summary>
+        <p>One Experiment Card: the eight fields above, filled in for your situation. That's the product. It isn't a course, a PDF of theory, or a call.</p>
+      </details>
+      <details>
+        <summary>How long does it take?</summary>
+        <p>Set aside about 30 minutes. You can stop halfway and come back — your answers stay in your browser on that device, and the email link brings you back.</p>
+      </details>
+      <details>
+        <summary>Do I have to create an account?</summary>
+        <p>No. No account, no password. You pay, you go straight to the builder, and the link comes by email too.</p>
+      </details>
+      <details>
+        <summary>What if it's not for me?</summary>
+        <p>Email us within 7 days and you get the full amount back, without having to explain. Keep any card you already made. Details on the <a href="legal/refunds.html">refund policy</a> page.</p>
+      </details>
+      <details>
+        <summary>Will this tell me what to do to grow?</summary>
+        <p>No — it helps you design one test and tells you when to stop. What the test says about your business is something you find out by running it. Anyone promising you the answer in advance is selling you something else.</p>
+      </details>
+      <details>
+        <summary>Do you need my email?</summary>
+        <p>Only if you want the card sent to you. The card shows on screen either way — the email is never a gate on something you paid for. What we store and how to have it deleted is on the <a href="legal/privacy.html">privacy policy</a> page.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ closing ============================ -->
+  <section>
+    <h2>One test, before the money moves</h2>
+    <p class="lead">
+      The next thing you're thinking of spending on might work. This is the cheap way
+      to find out before it's the expensive way.
+    </p>
+    <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
+    <a class="btn btn--primary" href="#checkout" data-cta="buy">
+      Get it now <span class="btn__price">— $19</span>
+    </a>
+    <p class="hero__note">
+      $19 for the first 100 buyers, $29 after. <b>Full refund within 7 days, no
+      questions asked.</b>
+    </p>
+  </section>
+
+  <!-- ============================ legal footer ============================ -->
+  <!-- Legal footer — handoff from squad-conteudo, legal/_footer-snippet.html (RG-08).
+       Copy kept verbatim. Hrefs use the "page at site root" prefix documented in the
+       snippet. Home is included now that this page exists. contact@lessriskmoregrowth.com is
+       RG-08's token, tracked under PF-02 (domain not registered yet). -->
+  <footer class="foot">
+    <nav class="foot__legal" aria-label="Legal">
+      <a href="index.html">Home</a>
+      <a href="legal/terms.html">Terms of Service</a>
+      <a href="legal/privacy.html">Privacy Policy</a>
+      <a href="legal/refunds.html">Refund Policy</a>
+      <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+      <!-- DT-02: reopens the cookie banner. Privacy Policy §9 promises
+           withdrawing is exactly as easy as accepting. consent.js reveals it;
+           with JavaScript off it stays hidden, because with JavaScript off
+           nothing is loaded or stored to withdraw. -->
+      <button type="button" data-tyjc-consent="open">Cookie settings</button>
+    </nav>
+    <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+    <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
+  </footer>
+
+</main>
+
+<!-- RG-07 owns page_view (site-wide); RG-02 owns checkout_start on the
+     data-cta="buy" buttons. This page emits neither inline, so nothing can
+     double-fire. -->
+<script src="analytics-config.js"></script>
+<script src="analytics.js"></script>
+<!-- DT-01: the consent gate. Nothing third-party is requested by any of the
+     three files above until consent.js decides it may be — Plausible because
+     it needs no cookie, GA4 only after an explicit Accept (Privacy Policy §9). -->
+<script src="consent.js"></script>
+<!-- RG-02: values first, then the behaviour that reads them — same shape as
+     analytics-config.js -> analytics.js above. checkout.js needs TYJC.track,
+     so it loads after analytics.js. -->
+<script src="checkout-config.js"></script>
+<script src="checkout.js"></script>
+</body>
+</html>

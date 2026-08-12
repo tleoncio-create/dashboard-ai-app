@@ -1,0 +1,297 @@
+/* TYJC — The Experiment Card (RG-04). Screen first, then A4 for print. */
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 4px 0 16px;
+}
+
+.card-actions .btn {
+  flex: 1 1 10rem;
+  min-height: 44px;
+}
+
+/* When a card is on screen it already carries every answer, so the builder's
+   review list underneath it would just repeat itself. */
+.done--has-card .summary,
+.done--has-card .done__lead {
+  display: none;
+}
+
+/* Spec §5 — the missing-number ask that stands in for the card until the user
+   confirms their own target. */
+.target-ask {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.target-ask__title { margin: 0 0 6px; font-size: 1.0625rem; }
+
+.target-ask__lead,
+.target-ask__hint {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.target-ask__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  margin-bottom: 6px;
+}
+
+.target-ask__hint { margin: 6px 0 12px; }
+
+.target-ask__error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: #fdecec;
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.target-ask .btn { width: 100%; min-height: 48px; }
+
+@media (min-width: 40rem) {
+  .target-ask .btn { width: auto; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  color: var(--ink);
+}
+
+.card__head {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.card__kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.card__title {
+  margin: 2px 0 6px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.card__sub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.card__field {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.card__field:first-child { border-top: 0; padding-top: 0; }
+
+.card__label {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.card__p {
+  margin: 0 0 8px;
+  font-size: 0.9375rem;
+  overflow-wrap: break-word;
+}
+
+.card__p:last-child { margin-bottom: 0; }
+
+.card__p--muted { color: var(--ink-soft); font-size: 0.875rem; }
+
+.card__lead { margin: 0 0 6px; font-weight: 700; font-size: 0.9375rem; }
+
+.card__big {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.card__steps {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  font-size: 0.875rem;
+}
+
+.card__steps li { margin-bottom: 6px; }
+.card__steps li:last-child { margin-bottom: 0; }
+
+.card__foot {
+  margin: 14px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.card-note {
+  margin: 12px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+/* ------------------------------------------------------------------ *
+ * "Email me the card" (RG-06 / US-06)
+ *
+ * Sits below the finished card, and looks like it: same panel as .target-ask,
+ * but with the neutral border, because this one is optional and the card is
+ * already delivered. Nothing here is styled to be the obvious next action.
+ * It disappears in print automatically — the .tyjc-print-path rule below
+ * hides every child of the mount that is not the card itself.
+ * ------------------------------------------------------------------ */
+.send-card {
+  display: block;
+  margin-top: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.send-card__title { margin: 0 0 6px; font-size: 1.0625rem; }
+
+.send-card__lead {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.send-card__label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+/* The consent row. 44px of tappable height at 375px, and the box is never
+   pre-ticked — Privacy Policy §2.3, enforced in card.js. */
+.send-card__opt {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 4px;
+  padding: 10px 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.send-card__opt input {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.send-card__status,
+.send-card__error {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+}
+
+.send-card__status { background: var(--accent-soft); color: var(--accent); }
+.send-card__error { background: var(--warn-soft); color: var(--warn); }
+
+.send-card .btn {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+}
+
+.send-card .btn:disabled { opacity: 0.65; cursor: default; }
+
+.send-card__fine {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 40rem) {
+  .card { padding: 24px; }
+  .card__title { font-size: 1.5rem; }
+  .card-actions .btn { flex: 0 0 auto; }
+  .send-card .btn { width: auto; min-width: 14rem; }
+}
+
+/* ------------------------------------------------------------------ *
+ * Print: the card alone, on one A4 page (US-04 AC6/AC7)
+ * ------------------------------------------------------------------ */
+@page {
+  size: A4;
+  margin: 11mm 12mm;
+}
+
+@media print {
+  html, body { background: #fff; margin: 0; padding: 0; }
+
+  /* Only the card prints. Hiding by visibility would leave the rest of the
+     builder occupying flow — and empty paper. card.js marks every ancestor of
+     the card with .tyjc-print-path, so everything off that path collapses. */
+  body > *:not(.tyjc-print-path),
+  .tyjc-print-path > *:not(.tyjc-print-path):not(#tyjc-card) {
+    display: none !important;
+  }
+
+  .tyjc-print-path {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    max-width: none !important;
+    background: none !important;
+  }
+
+  #tyjc-card {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    font-size: 7.6pt;
+    line-height: 1.28;
+    color: #000;
+  }
+
+  #tyjc-card .card__head { padding-bottom: 5pt; margin-bottom: 6pt; border-bottom: 1pt solid #000; }
+  #tyjc-card .card__kicker { font-size: 6pt; }
+  #tyjc-card .card__title { font-size: 12pt; margin: 1pt 0 2pt; }
+  #tyjc-card .card__sub { font-size: 6.6pt; color: #333; }
+
+  #tyjc-card .card__field { padding: 4pt 0; border-top: 0.5pt solid #999; break-inside: avoid; page-break-inside: avoid; }
+  #tyjc-card .card__label { font-size: 6.4pt; margin-bottom: 2pt; color: #000; }
+  #tyjc-card .card__p { font-size: 7.6pt; margin-bottom: 2pt; }
+  #tyjc-card .card__p--muted { font-size: 7pt; color: #333; }
+  #tyjc-card .card__lead { font-size: 7.6pt; margin-bottom: 2pt; }
+  #tyjc-card .card__big { font-size: 13pt; margin-bottom: 2pt; color: #000; }
+  #tyjc-card .card__steps { font-size: 7pt; margin-top: 3pt; padding-left: 11pt; }
+  #tyjc-card .card__steps li { margin-bottom: 1.5pt; }
+  #tyjc-card .card__foot { font-size: 6.4pt; margin-top: 5pt; padding-top: 3pt; border-top: 0.5pt solid #999; }
+}

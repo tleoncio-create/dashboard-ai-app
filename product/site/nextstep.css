@@ -1,0 +1,190 @@
+/* TYJC — post-purchase block: one question + the step-2 waiting list
+   (RG-10 / US-10). Mobile first, designed at 375px.
+
+   Loaded by BOTH thanks.html (with site.css) and builder.html (with
+   builder.css + card.css), which define the same design tokens but not the same
+   button modifiers. So every rule here is scoped to .nextstep and the buttons
+   are restyled inside that scope: the block has to look identical on both
+   pages, whichever base stylesheet happens to be underneath it.
+
+   Fallback values in var() are there for the same reason — the component must
+   not fall apart if it is ever mounted on a page that loads neither. */
+
+.nextstep {
+  display: block;
+  margin-top: 20px;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: var(--radius, 10px);
+  padding: 16px;
+}
+
+/* Two blocks in one panel: the question, then the invitation. The rule between
+   them says "this is a different subject" without a second box. */
+.nextstep__block + .nextstep__block {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line, #dfe3e8);
+}
+
+.nextstep__title {
+  margin: 0 0 6px;
+  font-size: 1.0625rem;
+}
+
+.nextstep__lead {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  color: var(--ink-soft, #4b545c);
+}
+
+/* Yes / No — side by side at 375px, each one a comfortable tap target. */
+.nextstep__answers {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+}
+
+.nextstep .btn {
+  font: inherit;
+  font-weight: 600;
+  min-height: 48px;
+  line-height: normal;
+  padding: 0 20px;
+  border-radius: var(--radius, 10px);
+  border: 1px solid transparent;
+  text-align: center;
+  cursor: pointer;
+}
+
+.nextstep .btn--answer {
+  flex: 1 1 0;
+  background: var(--card, #ffffff);
+  border-color: var(--line, #dfe3e8);
+  color: var(--ink, #14171a);
+}
+
+.nextstep .btn--answer[aria-pressed="true"] {
+  background: var(--accent-soft, #e6f0ee);
+  border-color: var(--accent, #14504b);
+  color: var(--accent, #14504b);
+  font-weight: 700;
+}
+
+.nextstep .btn--answer:disabled { cursor: default; }
+
+.nextstep .btn--primary {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  background: var(--accent, #14504b);
+  color: #fff;
+  font-weight: 700;
+}
+
+.nextstep .btn--ghost {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  background: var(--card, #ffffff);
+  border-color: var(--line, #dfe3e8);
+  color: var(--ink, #14171a);
+}
+
+.nextstep .btn:disabled { opacity: 0.65; }
+
+.nextstep .btn:focus-visible {
+  outline: 2px solid var(--accent, #14504b);
+  outline-offset: 2px;
+}
+
+/* The consent row. Never pre-ticked (Privacy Policy §2.3, enforced in
+   nextstep.js), and 44px of tappable height at 375px. */
+.nextstep__opt {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 4px 0;
+  padding: 10px 0;
+  font-size: 0.9375rem;
+  color: var(--ink, #14171a);
+  cursor: pointer;
+}
+
+.nextstep__opt input {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--accent, #14504b);
+}
+
+.nextstep__label {
+  display: block;
+  margin: 8px 0 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.nextstep__field {
+  width: 100%;
+  font: inherit;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: var(--radius, 10px);
+  background: #fff;
+  color: var(--ink, #14171a);
+}
+
+.nextstep__field--text {
+  min-height: 84px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.nextstep__field:focus {
+  outline: 2px solid var(--accent, #14504b);
+  outline-offset: 1px;
+  border-color: var(--accent, #14504b);
+}
+
+.nextstep__comment { margin-top: 14px; }
+
+.nextstep__status,
+.nextstep__error {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius, 10px);
+  font-size: 0.9375rem;
+}
+
+.nextstep__status {
+  background: var(--accent-soft, #e6f0ee);
+  color: var(--accent, #14504b);
+}
+
+.nextstep__error {
+  background: var(--warn-soft, #fdf3e2);
+  color: var(--warn, #8a5300);
+}
+
+.nextstep__fine {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft, #4b545c);
+}
+
+@media (min-width: 40rem) {
+  .nextstep .btn--primary,
+  .nextstep .btn--ghost { width: auto; min-width: 14rem; }
+  .nextstep .btn--answer { flex: 0 0 auto; min-width: 8rem; }
+}
+
+/* Print: on builder.html the card.css rule already hides everything in the card
+   mount that is not the card itself, so this block disappears with it. On
+   thanks.html there is nothing to print, but a buyer who prints the page should
+   not get a dead form in the middle of it. */
+@media print {
+  .nextstep { display: none !important; }
+}
