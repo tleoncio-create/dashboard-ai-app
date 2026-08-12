@@ -8,6 +8,8 @@
 
 ---
 
+> **Registro de replanejamento (12/08, PM)**: o lançamento de D7 (11/08) **não ocorreu** — as pendências do fundador (PF-08 checkout, PF-09 cupom, PF-11 API key, leitura da política) não foram respondidas até a data, e sem checkout/publicação não havia o que ligar. Nada foi perdido: o pacote técnico está aprovado (5 itens na DoD nível 1 + RG-07 com exceção). **Novo plano: lançamento em D+0 a partir da entrega das pendências** — o time antecipou a construção de RG-02/RG-06 em modo latente (12/08) para que a chegada da URL de checkout e da API key seja configuração, não desenvolvimento. Prioridade absoluta do P1 mantida (a Planning P2-1 segue adiada até o P1 no ar).
+
 ## 📋 A fazer
 
 - [ ] **RG-01** (US-01) — Página de vendas em inglês — `squad-conteudo` — Must · RICE 1890 · 1,0 d-agente · dep: nome ✅ (DF-01), domínio ⛔ PF-02
