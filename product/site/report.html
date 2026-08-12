@@ -278,18 +278,32 @@
     var cards = count(events, 'card_generated');
     var waitlist = count(events, 'waitlist_joined');
     /* RG-10 built. US-10 AC4 asks for the join segmented by track, and H2.2 in
-       personas.md is written about the scaling track specifically — so the row
-       keeps its headline ratio (joins / cards, with the absolute volumes) and
-       spells the two tracks out underneath it. Nothing about the seven frozen
-       events changes here. */
+       personas.md is written about the scaling track specifically: "≥ 40% of
+       SCALING-track buyers join the waiting list".
+     *
+     * QA BLQ-2: this row therefore reads the SCALING PAIR — scaling joins over
+     * scaling cards — and its verdict tag and its sample floor are computed on
+     * that pair alone. The all-tracks figure is still printed, because it is
+     * useful, but as context under the row: no tag, no verdict, and labelled as
+     * context so it cannot be mistaken for the hypothesis. The two disagree
+     * often (a strong first-traction track can carry an aggregate over 40%
+     * while scaling sits at 25%), and it is the scaling number that decides
+     * whether the Library gets built. Nothing about the seven frozen events
+     * changes here. */
     function byTrack(name, t) {
       return count(events, name, function (p) { return p.track === t; });
     }
+    var scalingCards = byTrack('card_generated', 'scaling');
+    var scalingJoins = byTrack('waitlist_joined', 'scaling');
     var waitlistNote =
-      'By track: first traction ' + fmt(byTrack('waitlist_joined', 'first_traction')) + '/' +
-      fmt(byTrack('card_generated', 'first_traction')) + ' · scaling ' +
-      fmt(byTrack('waitlist_joined', 'scaling')) + '/' + fmt(byTrack('card_generated', 'scaling')) +
-      '. H2.2 is the scaling pair.' +
+      'H2.2 is the scaling track only: this row is scaling joins / scaling cards. ' +
+      /* OBS-4, inherited from H1.4: same denominator, same distortion. */
+      'One buyer can generate a second card by picking another test, so the ' +
+      'denominator can hold more cards than buyers and push this percentage down. ' +
+      'Context, not a verdict: all tracks together ' + fmt(waitlist) + '/' + fmt(cards) +
+      ' (' + pct(waitlist, cards) + '), of which first traction ' +
+      fmt(byTrack('waitlist_joined', 'first_traction')) + '/' +
+      fmt(byTrack('card_generated', 'first_traction')) + '.' +
       (waitlist === 0
         ? ' RG-10 is built, but a join is only recorded once /api/waitlist has its key (PF-11).' +
           ' Read a zero here as "nothing could be captured", not as "buyers said no", until that is confirmed live.'
@@ -322,11 +336,11 @@
       },
       {
         id: 'H2.2', hypothesis: 'Priya wants step 2 of the ladder',
-        signal: '% joining the waiting list (of people who got a card)',
+        signal: '% joining the waiting list, on the scaling track (of scaling buyers who got a card)',
         note: waitlistNote,
         target: '≥ 40%',
-        html: cell(waitlist, cards, 'joined', 'card|cards'),
-        status: status(waitlist, cards, 0.4, 30)
+        html: cell(scalingJoins, scalingCards, 'joined', 'card|cards'),
+        status: status(scalingJoins, scalingCards, 0.4, 30)
       },
       {
         id: 'H2.4', hypothesis: 'One product serves both personas',

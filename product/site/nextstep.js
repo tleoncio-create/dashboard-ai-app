@@ -426,7 +426,8 @@
       el(
         'p',
         'nextstep__fine',
-        'One email, when it opens, and nothing else follows. Reply "unsubscribe" ' +
+        'A confirmation now, then one email when it opens — nothing else ' +
+          'follows. Reply "unsubscribe" ' +
           "any time and you're off the list. We never sell your address. There is " +
           "no date on this, and we're not going to invent one."
       )
@@ -473,7 +474,7 @@
           field.disabled = true;
           opt.disabled = true;
           join.textContent = 'Added';
-          show(status, "You're on the list. We'll email you once, when it opens — and only then.");
+          show(status, "You're on the list. A confirmation is on its way now, then one email when it opens — nothing else follows.");
           /* Only on a real success. See "THE EVENT" in the header. */
           emitWaitlistJoined(opts.track);
           return;

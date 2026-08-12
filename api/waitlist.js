@@ -66,28 +66,45 @@ const MAX_COMMENT = 2000;  // a sentence or two; anything longer is not feedback
 /* Rate limit, per IP, in memory. Same honest caveat as send-card.js: a
    serverless instance is ephemeral and there can be many of them, so this is a
    speed bump against one browser hammering the endpoint, not a security
-   control. The ceiling is higher than send-card's five because one buyer
-   legitimately makes up to three calls here — the Yes/No answer, the optional
-   comment, and the waiting-list join — and a retry after a flaky network must
-   not lock them out of the one that carries the H2.2 signal. */
-const RATE_MAX = 8;
+   control.
+ *
+ * TWO BUCKETS, NOT ONE (QA OBS-3). An IP is not a person. The audience for this
+ * product sits in coworking spaces and offices, where a whole floor leaves
+ * through one NAT address — so "8 requests per IP" is really "8 requests per
+ * building". Feedback can survive that: a suppressed answer is a lost opinion.
+ * The join cannot. A 429 on a join emits no waitlist_joined event, so the loss
+ * is invisible AND one-directional — H2.2 can only ever be read too low, and
+ * nothing on the panel would say why. Suppressing the number we are running the
+ * sprint to measure is a worse failure than serving a few extra emails.
+ *
+ * So the join gets its own bucket with a ceiling of 40 per IP per window,
+ * roughly a full coworking floor of distinct buyers, while feedback keeps its
+ * 8 — one buyer legitimately makes up to three calls there (answer, optional
+ * comment, join) plus retries after a flaky network. Raising the join ceiling
+ * costs at most 40 confirmation emails per 10 minutes per IP per instance, all
+ * of them one short message to an address someone typed, all bounded again by
+ * the Resend account itself. Cheap next to a silently deflated H2.2. */
+const RATE_MAX = { feedback: 8, waitlist: 40 };
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const hits = new Map();
 
-function rateLimited(ip) {
+function rateLimited(ip, kind) {
   const now = Date.now();
   if (hits.size > 5000) {
     for (const [key, stamps] of hits) {
       if (!stamps.some((t) => now - t < RATE_WINDOW_MS)) hits.delete(key);
     }
   }
-  const recent = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  if (recent.length >= RATE_MAX) {
-    hits.set(ip, recent);
+  /* Keyed by kind as well as IP, so a burst of feedback can never eat the
+     budget the join needs, and vice versa. */
+  const bucket = kind + '|' + ip;
+  const recent = (hits.get(bucket) || []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_MAX[kind]) {
+    hits.set(bucket, recent);
     return true;
   }
   recent.push(now);
-  hits.set(ip, recent);
+  hits.set(bucket, recent);
   return false;
 }
 
@@ -149,9 +166,12 @@ function waitlistBody() {
   const lines = [];
   lines.push("You're on the list for The Experiment Library.");
   lines.push('');
-  lines.push("That's the whole of it: when it opens, you get one email. We");
-  lines.push("are not giving you a date, because we don't have one, and we'd");
-  lines.push("rather say so than invent one.");
+  /* The count has to match the copy the buyer consented to (nextstep.js and
+     Privacy §2.3): this note is email one, the launch notice is email two, and
+     there is no third. */
+  lines.push("That's the whole of it: this note now, then one email when it");
+  lines.push("opens — nothing else follows. We are not giving you a date,");
+  lines.push("because we don't have one, and we'd rather say so than invent one.");
   lines.push('');
   lines.push('Nothing else changes. The Experiment Card you already have is');
   lines.push('yours, and this list is not a subscription to anything.');
@@ -266,7 +286,7 @@ export default async function handler(req, res) {
     }
   }
 
-  if (rateLimited(clientIp(req))) {
+  if (rateLimited(clientIp(req), kind)) {
     return fail(res, 429, "That's a lot of requests in a short time. Wait a few minutes and try again.");
   }
 
