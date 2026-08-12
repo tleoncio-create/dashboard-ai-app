@@ -57,9 +57,26 @@
  *     page load and inflated the volume that decides degrau 2 by up to 5.5x;
  *   - clear() drops the mark with the store, so a wiped device starts over.
  *
- * "Delivered" means "handed to the sink". If the sink throws, the event is not
- * re-queued: a provider that fails on an event will fail on the replay too,
- * and an analytics retry loop is not worth a page load.
+ * "Delivered" means "handed to the sink" — NOT "arrived at the provider". This
+ * file has no way to know the difference, and the gap has one large, everyday
+ * cause: an ad blocker. With uBlock or similar installed, plausible.js and
+ * gtag.js never load; the queue stub consent.js installs still accepts the
+ * call, so the sink returns normally, the mark advances, and the event is gone.
+ * It is not retried and it is not re-queued — see the paragraph below.
+ *
+ * The direction of that error is UNDERCOUNTING: the panel and the provider show
+ * fewer events than really happened, never more. The PM accepted that trade for
+ * the degrau-2 kill/scale call because it is the safe direction — a decision
+ * made on undercounted numbers kills something that was actually working
+ * slightly better than it looked, whereas overcounting would scale a bet that
+ * never earned it. Read every absolute volume as a floor, and remember that
+ * ad-blocker rates differ by traffic source, so paid and organic are not
+ * discounted by the same amount (US-07 AC4 compares them — the comparison is
+ * indicative, not exact).
+ *
+ * If the sink throws, the event is not re-queued: a provider that fails on an
+ * event will fail on the replay too, and an analytics retry loop is not worth a
+ * page load.
  *
  * A store written before the mark existed (no seq on its events) is adopted as
  * ALREADY delivered on first read. Under the old code those events had already

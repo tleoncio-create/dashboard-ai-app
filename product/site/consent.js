@@ -136,7 +136,29 @@
   var sinks = [];
   var installed = false;
 
+  /* The identity of an event, for "have I already sent this one?" (deliver) and
+     for "did this one happen on this page load?" (isThisPageLoad).
+
+     DEF-1: this used to be name|ts|props, always. That key cannot tell two
+     legitimate events apart when they carry the same name, the same props and
+     the same millisecond — two builder_step_completed from a double Next, a
+     checkout_start retried instantly — and the second one was silently dropped,
+     undercounting the very funnel the degrau-2 decision reads.
+
+     analytics.js already stamps every recorded event with a per-device sequence
+     number that is unique by construction (persist() hands out mark.next and
+     advances it), so `seq` is the identity whenever it is there. It is there for
+     everything this site records today, live or replayed from storage.
+
+     The composite key stays as the fallback for the one case that has no seq: an
+     event handed to fanout() by something other than analytics.js — a hand-built
+     fixture, or a store written before the mark existed and read by an older
+     code path. Losing a duplicate there is the same trade as before, and it is
+     not a path the product takes. */
   function eventKey(event) {
+    if (event && typeof event.seq === 'number' && isFinite(event.seq)) {
+      return 'seq:' + event.seq;
+    }
     var props;
     try {
       props = JSON.stringify(event.props || {});
