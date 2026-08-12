@@ -7,6 +7,8 @@
 <title>Experiment Builder — Test Your Jump Cheaply</title>
 <link rel="stylesheet" href="builder.css">
 <link rel="stylesheet" href="card.css">
+<!-- RG-10: the post-purchase block card.js appends under the finished card. -->
+<link rel="stylesheet" href="nextstep.css">
 <link rel="stylesheet" href="consent.css">
 </head>
 <body>
@@ -74,6 +76,10 @@
 <script src="experiments.js"></script>
 <script src="recommend.js"></script>
 <script src="builder.js"></script>
+<!-- RG-10 before RG-04: card.js calls TYJC.nextStep.render() as the last thing
+     it appends under a finished card, so the module has to exist by then. It
+     self-mounts nothing here — there is no #tyjc-nextstep on this page. -->
+<script src="nextstep.js"></script>
 <script src="card.js"></script>
 </body>
 </html>

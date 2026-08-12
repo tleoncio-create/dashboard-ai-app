@@ -20,6 +20,8 @@
 <meta name="robots" content="noindex">
 <title>You're in — Test Your Jump Cheaply</title>
 <link rel="stylesheet" href="site.css">
+<!-- RG-10: the post-purchase block (one question + the step-2 waiting list). -->
+<link rel="stylesheet" href="nextstep.css">
 <link rel="stylesheet" href="consent.css">
 </head>
 <body>
@@ -77,6 +79,30 @@
     </p>
   </section>
 
+  <!-- ============================ RG-10 / US-10 ============================
+       One question, and the invitation to the step-2 waiting list.
+
+       It sits AFTER the refund section and before the footer, which is the last
+       thing on the page and competes with nothing: the two actions this page
+       exists for — check your email, open the builder — are both above it.
+
+       The mount is empty on purpose. nextstep.js fills it, and it decides what
+       to show from what this device has done:
+         - the waiting-list invitation, always. It needs nothing to have
+           happened first;
+         - the one question ONLY if a card was already generated on this device.
+           A buyer who has just paid has not built anything yet, and "is this
+           experiment ready to run on Monday?" asked before there is an
+           experiment is a question with no honest answer. They get it at the
+           end of the card flow instead (card.js), and whichever page they
+           answer on, they are never asked twice.
+
+       Nothing here gates the product: US-10 AC5, and the two sections above are
+       untouched by it. -->
+  <section>
+    <div id="tyjc-nextstep"></div>
+  </section>
+
   <!-- ============================ legal footer ============================ -->
   <!-- Legal footer — handoff from squad-conteudo, legal/_footer-snippet.html (RG-08).
        Copy kept verbatim. Hrefs use the "page at site root" prefix documented in the
@@ -104,5 +130,8 @@
 <!-- RG-02: `purchase`, once per device. Loads after analytics.js so page_view
      is recorded before it, keeping the funnel in order. -->
 <script src="thanks.js"></script>
+<!-- RG-10: fills #tyjc-nextstep above. Loads after thanks.js so `purchase` is
+     recorded before anything this file could emit. -->
+<script src="nextstep.js"></script>
 </body>
 </html>

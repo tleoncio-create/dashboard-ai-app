@@ -277,6 +277,23 @@
     var starts = count(events, 'builder_start');
     var cards = count(events, 'card_generated');
     var waitlist = count(events, 'waitlist_joined');
+    /* RG-10 built. US-10 AC4 asks for the join segmented by track, and H2.2 in
+       personas.md is written about the scaling track specifically — so the row
+       keeps its headline ratio (joins / cards, with the absolute volumes) and
+       spells the two tracks out underneath it. Nothing about the seven frozen
+       events changes here. */
+    function byTrack(name, t) {
+      return count(events, name, function (p) { return p.track === t; });
+    }
+    var waitlistNote =
+      'By track: first traction ' + fmt(byTrack('waitlist_joined', 'first_traction')) + '/' +
+      fmt(byTrack('card_generated', 'first_traction')) + ' · scaling ' +
+      fmt(byTrack('waitlist_joined', 'scaling')) + '/' + fmt(byTrack('card_generated', 'scaling')) +
+      '. H2.2 is the scaling pair.' +
+      (waitlist === 0
+        ? ' RG-10 is built, but a join is only recorded once /api/waitlist has its key (PF-11).' +
+          ' Read a zero here as "nothing could be captured", not as "buyers said no", until that is confirmed live.'
+        : '');
     var sales = count(events, 'page_view', function (p) { return p.page === 'sales'; });
     var purchases = count(events, 'purchase');
 
@@ -306,11 +323,10 @@
       {
         id: 'H2.2', hypothesis: 'Priya wants step 2 of the ladder',
         signal: '% joining the waiting list (of people who got a card)',
+        note: waitlistNote,
         target: '≥ 40%',
-        html: waitlist || state.source === 'sample'
-          ? cell(waitlist, cards, 'joined', 'card|cards')
-          : '<span class="pct">—</span><span class="vol">RG-10 not built: needs a <code>waitlist_joined</code> event</span>',
-        status: waitlist || state.source === 'sample' ? status(waitlist, cards, 0.4, 30) : '<span class="tag tag--none">waiting on RG-10</span>'
+        html: cell(waitlist, cards, 'joined', 'card|cards'),
+        status: status(waitlist, cards, 0.4, 30)
       },
       {
         id: 'H2.4', hypothesis: 'One product serves both personas',

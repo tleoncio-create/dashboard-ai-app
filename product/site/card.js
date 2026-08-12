@@ -561,6 +561,12 @@
      gives an instant answer, the server's is the rule. */
   var EMAIL_RE = /^[^\s@,;:<>"'\\]+@[^\s@,;:<>"'\\]+\.[^\s@,;:<>"'\\]{2,}$/;
 
+  /* RG-10 reads this to pre-fill its own address field when the buyer has just
+     emailed themselves the card. IN MEMORY, for this page load only: the
+     address is deliberately not persisted anywhere (see EMAIL_KEY above, which
+     stores a boolean and nothing else). */
+  var sentAddress = '';
+
   function renderEmailForm(state, into) {
     var box = el('section', 'send-card');
 
@@ -662,6 +668,7 @@
           opt.disabled = true;
           send.disabled = true;
           send.textContent = 'Sent';
+          sentAddress = address; // RG-10 pre-fill, this page load only
           /* Only on a real success. A failed send captured nothing, and the
              funnel must not say otherwise. */
           emitEmailCaptured(state);
@@ -839,6 +846,24 @@
 
     /* RG-06, below the finished card on purpose — see renderEmailForm. */
     renderEmailForm(state, mount);
+
+    /* RG-10 (US-10), LAST. The order is the whole decision: the buyer's next
+       action under a finished card is still "email it to me", so the one
+       question and the waiting-list invitation come after it and never compete
+       with it. nextstep.js explains the placement in full; the short version is
+       that this is the only point in the journey where "is this ready to run on
+       Monday?" is a question the buyer can actually answer.
+       Loaded optionally: an older builder.html without the script still renders
+       a complete card. */
+    if (TYJC.nextStep && typeof TYJC.nextStep.render === 'function') {
+      TYJC.nextStep.render(mount, {
+        track: state.track,
+        withQuestion: true,
+        emailHint: function () {
+          return sentAddress;
+        }
+      });
+    }
 
     markPrintPath(article);
     emitCardGenerated(state);
