@@ -9,9 +9,15 @@
 
      PENDING PF-08: the checkout URL itself does not exist yet — an account is
      not a buy link. It needs a store, a product priced per DF-02 ($29, with $19
-     for the first 100), and the store activated for live payments. Until then
-     every purchase button below carries data-cta="buy" and href="#checkout";
-     RG-02 swaps those hrefs — search for data-cta="buy". Three of them.
+     for the first 100), and the store activated for live payments.
+
+     RG-02 IS BUILT AND WAITING ON THAT ONE VALUE. Nothing in this file changes
+     when the URL arrives: the three purchase buttons keep data-cta="buy" and
+     href="#checkout" as their no-JavaScript fallback, and checkout.js rewrites
+     the href at page load. Going live is TWO LINES IN checkout-config.js
+     (enabled: true, checkoutUrl: '...'), and taking it back down is the same
+     edit in reverse. Until then a click on any of the three scrolls to
+     #checkout and says sales have not opened yet — never a dead button.
 
      PENDING PF-02: contact@lessriskmoregrowth.com in the footer is RG-08's token (domain
      not registered yet). Replace it together with the copies in legal/.
@@ -46,7 +52,9 @@
          brand tagline wherever the brand is named. Do not drop the leading "-". -->
     <p class="brandline">- Risk + Growth</p>
 
-    <!-- PENDING PF-08: replace with Lemon Squeezy checkout URL (data-cta="buy") -->
+    <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
     <a class="btn btn--primary" href="#checkout" data-cta="buy">
       Get it now <span class="btn__price">— $19</span>
     </a>
@@ -150,9 +158,16 @@
       Every experiment in the library costs $500 or less and takes 14 days or less.
       None of them assume you have an audience, a team, or a budget you don't have.
     </p>
-    <!-- PENDING RG-02: the builder is currently open so QA can walk the journey
-         end to end. Once checkout lands, this href becomes the post-checkout
-         redirect target and the builder sits behind the payment. -->
+    <!-- The builder is currently open so QA can walk the journey end to end.
+         RG-02 built the post-purchase landing as thanks.html, which is where
+         the Lemon Squeezy "redirect after purchase" setting must point (part of
+         PF-08, configured in the LS product, not in this repo). thanks.html is
+         what emits `purchase` and it links on to the builder from there.
+
+         Note for whoever closes the paywall: a static site cannot actually gate
+         the builder — there is no server to check a payment. Today the gate is
+         that nobody is given the link before paying. Real enforcement needs a
+         backend and is out of the frozen MVP scope. -->
     <p class="lead">
       The moment you pay you land straight in the
       <a href="builder.html">Experiment Builder</a> — the same link comes by email,
@@ -209,7 +224,9 @@
         <li>As many cards as you need for your own business</li>
       </ul>
 
-      <!-- PENDING PF-08: replace with Lemon Squeezy checkout URL (data-cta="buy") -->
+      <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
       <a class="btn btn--primary" href="#checkout" data-cta="buy">
         Get it now <span class="btn__price">— $19</span>
       </a>
@@ -260,7 +277,9 @@
       The next thing you're thinking of spending on might work. This is the cheap way
       to find out before it's the expensive way.
     </p>
-    <!-- PENDING PF-08: replace with Lemon Squeezy checkout URL (data-cta="buy") -->
+    <!-- PF-08: href rewritten at page load by checkout.js from the URL in
+         checkout-config.js. href="#checkout" is the pre-launch state and the
+         no-JavaScript fallback — do not hard-code a checkout URL here. -->
     <a class="btn btn--primary" href="#checkout" data-cta="buy">
       Get it now <span class="btn__price">— $19</span>
     </a>
@@ -294,14 +313,19 @@
 
 </main>
 
-<!-- Analytics seam only. RG-07 owns page_view (site-wide) and RG-02 owns
-     checkout_start on the data-cta="buy" buttons — this page deliberately emits
-     neither, so nothing double-fires when those stories land. -->
+<!-- RG-07 owns page_view (site-wide); RG-02 owns checkout_start on the
+     data-cta="buy" buttons. This page emits neither inline, so nothing can
+     double-fire. -->
 <script src="analytics-config.js"></script>
 <script src="analytics.js"></script>
 <!-- DT-01: the consent gate. Nothing third-party is requested by any of the
      three files above until consent.js decides it may be — Plausible because
      it needs no cookie, GA4 only after an explicit Accept (Privacy Policy §9). -->
 <script src="consent.js"></script>
+<!-- RG-02: values first, then the behaviour that reads them — same shape as
+     analytics-config.js -> analytics.js above. checkout.js needs TYJC.track,
+     so it loads after analytics.js. -->
+<script src="checkout-config.js"></script>
+<script src="checkout.js"></script>
 </body>
 </html>

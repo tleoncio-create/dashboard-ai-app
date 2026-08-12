@@ -444,6 +444,10 @@
     if (path.indexOf('/legal/') !== -1) return 'legal';
     if (file === 'builder.html') return 'builder';
     if (file === 'report.html') return 'report';
+    /* RG-02's post-purchase landing. `page` is a prop value, not an event name,
+       so naming it here adds nothing to the frozen contract — it only stops the
+       one page a buyer sees after paying from being filed under "other". */
+    if (file === 'thanks.html') return 'thanks';
     if (file === '' || file === 'index.html') return 'sales';
     return 'other';
   }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- ==========================================================================
+     TYJC post-purchase landing — RG-02 / US-02.
+
+     Lemon Squeezy redirects here after a completed payment. That redirect is
+     configured in the LS product ("Redirect to a custom URL after purchase"),
+     not in this repo — it is part of PF-08, alongside the checkout URL itself.
+     Point it at https://lessriskmoregrowth.com/thanks.html
+
+     noindex: this page is only meaningful to someone who just paid, and it
+     would compete with the sales page in search if it were indexed.
+
+     The `purchase` event is emitted by thanks.js, once per device — see the
+     header there. This file emits nothing inline.
+     ========================================================================== -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>You're in — Test Your Jump Cheaply</title>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="consent.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Test Your Jump Cheaply</p>
+    <h1 class="hero__title">You're in. Here's what happens now.</h1>
+    <p class="hero__lead">
+      Payment went through. No account to create, no password to remember —
+      you can start straight away.
+    </p>
+    <p class="brandline">- Risk + Growth</p>
+  </header>
+
+  <section>
+    <h2>Next step: check your email</h2>
+    <div class="panel panel--accent">
+      <p>
+        <b>Two emails are on their way.</b> A receipt from Lemon Squeezy, who
+        handled the payment, and one from us with the link back to the builder.
+      </p>
+      <p>
+        Keep the second one. It's how you get back here if you close the tab,
+        and it works on the device you open it on.
+      </p>
+      <p style="margin-bottom:0">
+        Nothing after five minutes? Look in spam and promotions first, then
+        email <a href="mailto:contact@lessriskmoregrowth.com">contact@lessriskmoregrowth.com</a>
+        and we'll sort it out by hand.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Or just start now</h2>
+    <p class="lead">
+      Eight questions, about 30 minutes. You can stop halfway and come back —
+      your answers stay in this browser, on this device.
+    </p>
+    <a class="btn btn--primary" href="builder.html">Open the Experiment Builder</a>
+    <p class="hero__note">
+      At the end you pick one cheap test and walk out with the card: a spending
+      cap you set, a start date, a read date, the number that counts as a yes,
+      and the number where you stop.
+    </p>
+  </section>
+
+  <section>
+    <h2>If it turns out not to be for you</h2>
+    <p class="lead">
+      Email us within 7 days and you get the full amount back, without having to
+      explain. Keep any card you already made. It's on the
+      <a href="legal/refunds.html">refund policy</a> page.
+    </p>
+  </section>
+
+  <!-- ============================ legal footer ============================ -->
+  <!-- Legal footer — handoff from squad-conteudo, legal/_footer-snippet.html (RG-08).
+       Copy kept verbatim. Hrefs use the "page at site root" prefix documented in the
+       snippet. contact@lessriskmoregrowth.com is RG-08's token, tracked under PF-02. -->
+  <footer class="foot">
+    <nav class="foot__legal" aria-label="Legal">
+      <a href="index.html">Home</a>
+      <a href="legal/terms.html">Terms of Service</a>
+      <a href="legal/privacy.html">Privacy Policy</a>
+      <a href="legal/refunds.html">Refund Policy</a>
+      <a href="mailto:contact@lessriskmoregrowth.com">Contact</a>
+      <!-- DT-02: reopens the cookie banner (Privacy Policy §9). -->
+      <button type="button" data-tyjc-consent="open">Cookie settings</button>
+    </nav>
+    <p>Test Your Jump Cheaply, from - Risk + Growth. Payments handled by Lemon Squeezy as merchant of record. Nothing on this site is legal, financial, accounting, tax, or investment advice.</p>
+    <p>Full refund within 7 days, no questions asked. <a href="legal/refunds.html">How it works</a>.</p>
+  </footer>
+
+</main>
+
+<script src="analytics-config.js"></script>
+<script src="analytics.js"></script>
+<!-- DT-01: consent gate — see index.html and Privacy Policy §9. -->
+<script src="consent.js"></script>
+<!-- RG-02: `purchase`, once per device. Loads after analytics.js so page_view
+     is recorded before it, keeping the funnel in order. -->
+<script src="thanks.js"></script>
+</body>
+</html>

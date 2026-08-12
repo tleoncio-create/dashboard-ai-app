@@ -276,6 +276,26 @@ p { margin: 0 0 12px; }
 
 .price__guarantee b { color: var(--ink); }
 
+/* ---------------- pre-launch checkout note (RG-02) ----------------
+   Inserted by checkout.js into #checkout while checkout-config.js has
+   enabled:false. Same shape as .example__flag — this is the same kind of
+   message: something the page is telling you straight, not selling you.
+   It carries tabindex="-1" so focus can land on it after the scroll; the
+   outline is suppressed because the focus is programmatic, not a tab stop. */
+
+.checkout-note {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.9375rem;
+  color: var(--warn);
+  text-align: left;
+}
+
+.checkout-note:focus { outline: none; }
+
 /* ---------------- faq ---------------- */
 
 .faq { margin-top: 8px; }

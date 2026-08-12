@@ -331,8 +331,11 @@
 
   var OWNERS = {
     page_view: 'RG-07 · live',
-    checkout_start: 'RG-02 · blocked by PF-01',
-    purchase: 'RG-02 · blocked by PF-01',
+    /* RG-02 is built. Both events are wired and testable; neither can happen
+       for a real buyer until the founder delivers the checkout URL and it is
+       pasted into checkout-config.js (PF-08). */
+    checkout_start: 'RG-02 · built, waiting on PF-08',
+    purchase: 'RG-02 · built, waiting on PF-08',
     builder_start: 'RG-03 · live',
     builder_step_completed: 'RG-03 · live',
     card_generated: 'RG-04 · live',
